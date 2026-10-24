@@ -52,8 +52,8 @@ jobs:
 
       - name: Prepare test database
         run: |
+          # SQLite: file is created on connect; database:create is unsupported on this platform.
           mkdir -p var
-          php bin/console doctrine:database:create --env=test --if-not-exists --no-interaction
           php bin/console doctrine:schema:create --env=test --no-interaction
 
       - name: Smoke tests
