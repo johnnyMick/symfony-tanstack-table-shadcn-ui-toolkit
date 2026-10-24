@@ -1,0 +1,56 @@
+{
+    "name": "johnnymick/symfony-tanstack-table-shadcn-ui-toolkit",
+    "type": "symfony-bundle",
+    "description": "TanStack Table and shadcn/ui toolkit for Symfony",
+    "keywords": ["symfony", "symfony-bundle", "tanstack", "table", "shadcn"],
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "symfony/config": "^7.0 || ^8.0",
+        "symfony/dependency-injection": "^7.0 || ^8.0",
+        "symfony/deprecation-contracts": "^2.5 || ^3.0",
+        "symfony/http-foundation": "^7.0 || ^8.0",
+        "symfony/http-kernel": "^7.0 || ^8.0"
+    },
+    "require-dev": {
+        "doctrine/orm": "^2.20 || ^3.0",
+        "phpunit/phpunit": "^11.5 || ^12.0",
+        "symfony/framework-bundle": "^7.0 || ^8.0",
+        "symfony/maker-bundle": "^1.60",
+        "symfony/twig-bundle": "^7.0 || ^8.0"
+    },
+    "suggest": {
+        "doctrine/orm": "Required for TableQuery::applyDoctrineFilter()",
+        "symfony/maker-bundle": "Required to run make:tstdt-* scaffold commands",
+        "symfony/ux-twig-component": "Required by the scaffolded tstdt_* Twig components",
+        "symfony/stimulus-bundle": "Required for the tanstack-table Stimulus controller",
+        "symfony/asset-mapper": "Recommended for importing @tanstack/table-core and CSS",
+        "tales-from-a-dev/twig-tailwind-extra": "Required for Tailwind class merging in Input and related components"
+    },
+    "autoload": {
+        "psr-4": {
+            "SymfonyTanstackTableShadcnUiToolkit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SymfonyTanstackTableShadcnUiToolkit\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "thanks": {
+            "name": "johnnymick/symfony-tanstack-table-shadcn-ui-toolkit",
+            "url": "https://github.com/johnnyMick/symfony-tanstack-table-shadcn-ui-toolkit"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "sync-check": "bash bin/check-skeleton-sync.sh"
+    }
+}

@@ -1,0 +1,12 @@
+# Keep Packagist / git-archive dist free of demo, tests, and tooling noise.
+/.gitattributes      export-ignore
+/.editorconfig       export-ignore
+/.github/            export-ignore
+/.gitignore          export-ignore
+/bin/                export-ignore
+/demo/               export-ignore
+/phpunit.xml.dist    export-ignore
+/recipes/            export-ignore
+/tests/              export-ignore
+/CHANGELOG.md        export-ignore
+/post-install.txt    export-ignore
