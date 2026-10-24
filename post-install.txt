@@ -1,0 +1,23 @@
+<bg=blue;fg=white> Symfony TanStack Table shadcn/ui Toolkit </>
+
+Next steps:
+
+  1. <fg=cyan>Theme + CSS</>
+       <comment>php bin/console make:tstdt-theme --as-app-css</>
+       <comment>php bin/console importmap:require shadcn/dist/tailwind.css tw-animate-css/dist/tw-animate.css</>
+       <comment>php bin/console importmap:require @tanstack/table-core</>
+
+  2. <fg=cyan>Scaffold the table UI</> (Twig components + Stimulus)
+       <comment>php bin/console make:tstdt-data-table --with-controllers --with-icons</>
+       Optional admin shell:
+       <comment>php bin/console make:tstdt-admin-layout</>
+       Or kits:
+       <comment>php bin/console make:tstdt-kit --list</>
+
+  3. <fg=cyan>Create a resource</>
+       <comment>php bin/console make:tstdt-crud-resource Product --with-admin-layout</>
+
+  4. Docs: <comment>README.md</> · Changelog: <comment>CHANGELOG.md</>
+
+Security note: <fg=yellow>Column::html()</> escapes cell values. Use <fg=yellow>Column::rawHtml()</>
+only for trusted HTML.
