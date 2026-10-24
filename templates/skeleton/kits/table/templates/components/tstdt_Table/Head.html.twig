@@ -1,0 +1,8 @@
+<th
+    data-slot="table-head"
+    {{ attributes.without('class') }}
+    class="{{ ('h-8 px-2 text-start align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pe-0 ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The header cell content. -#}
+    {%- block content %}{% endblock -%}
+</th>
