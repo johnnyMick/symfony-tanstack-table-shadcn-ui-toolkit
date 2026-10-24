@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demo data{% endblock %}
+
+{% block body %}
+    <twig:tstdt_AdminLayout>
+        <twig:block name="title">Demo data</twig:block>
+
+        <twig:block name="actions">
+            <form method="post" action="{{ path('app_demo_reset') }}" onsubmit="return confirm('Rebuild the demo database with fresh sample data?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('demo_reset') }}">
+                <twig:tstdt_Button type="submit" variant="outline" size="sm">
+                    <twig:ux:icon name="lucide:refresh-cw" aria-hidden="true" />
+                    Reset data
+                </twig:tstdt_Button>
+            </form>
+        </twig:block>
+
+        <twig:tstdt_TanstackDataTable :config="table" />
+    </twig:tstdt_AdminLayout>
+{% endblock %}

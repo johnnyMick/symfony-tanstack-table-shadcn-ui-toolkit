@@ -1,0 +1,7 @@
+<div
+    role="separator"
+    aria-orientation="horizontal"
+    data-slot="select-separator"
+    {{ attributes.without('class') }}
+    class="{{ ('pointer-events-none -mx-1 my-1 h-px bg-border ' ~ attributes.render('class'))|tailwind_merge }}"
+></div>

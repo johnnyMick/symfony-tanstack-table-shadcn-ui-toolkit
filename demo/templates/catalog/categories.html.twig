@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block body %}
+    <twig:tstdt_AdminLayout>
+        <twig:block name="title">Categories</twig:block>
+
+        <twig:tstdt_TanstackDataTable :config="table" />
+    </twig:tstdt_AdminLayout>
+{% endblock %}

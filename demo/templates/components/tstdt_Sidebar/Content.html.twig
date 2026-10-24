@@ -1,0 +1,8 @@
+<div
+    data-slot="sidebar-content"
+    {{ attributes.without('class') }}
+    class="{{ ('flex min-h-0 flex-1 flex-col gap-0 group-data-[collapsible=icon]:overflow-hidden ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The scrollable sidebar body, typically one or more `Sidebar:Group`. -#}
+    {%- block content %}{% endblock -%}
+</div>

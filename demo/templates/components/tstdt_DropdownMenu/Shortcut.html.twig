@@ -1,0 +1,8 @@
+<span
+    data-slot="dropdown-menu-shortcut"
+    {{ attributes.without('class') }}
+    class="{{ ('ms-auto text-xs tracking-widest text-muted-foreground group-focus/dropdown-menu-item:text-accent-foreground ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The shortcut label, e.g. "⌘K". -#}
+    {%- block content %}{% endblock -%}
+</span>

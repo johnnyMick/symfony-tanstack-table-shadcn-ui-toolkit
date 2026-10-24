@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order items{% endblock %}
+
+{% block body %}
+    <twig:tstdt_AdminLayout>
+        <twig:block name="title">Order items</twig:block>
+
+        <twig:tstdt_TanstackDataTable :config="table" />
+    </twig:tstdt_AdminLayout>
+{% endblock %}

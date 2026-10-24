@@ -1,0 +1,212 @@
+{% set page_content %}{% block content %}{% endblock %}{% endset %}
+{% set page_title %}{% block title %}{% endblock %}{% endset %}
+{% set page_actions %}{% block actions %}{% endblock %}{% endset %}
+{% set current_route = app.request.attributes.get('_route') %}
+{% set catalog_open = current_route in ['app_catalog_products', 'app_catalog_categories'] %}
+{% set sales_open = current_route in ['app_sales_orders', 'app_sales_customers', 'app_sales_order_items'] %}
+{% set settings_open = current_route in ['app_settings_demo_data', 'app_settings_preferences'] %}
+
+<twig:tstdt_Sidebar:Provider id="admin-sidebar" class="min-h-svh w-full">
+    <twig:tstdt_Sidebar collapsible="icon" variant="inset" label="Admin navigation">
+        <twig:tstdt_Sidebar:Header>
+            <twig:tstdt_Sidebar:Menu>
+                <twig:tstdt_Sidebar:MenuItem>
+                    <twig:tstdt_Sidebar:MenuButton as="a" href="{{ path('app_demo') }}" size="lg" tooltip="TanStack Demo">
+                        <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                            <twig:ux:icon name="lucide:table-2" class="size-4" aria-hidden="true" />
+                        </div>
+                        <div class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                            <span class="truncate font-semibold">DataTables Demo</span>
+                            <span class="truncate text-xs">Admin console</span>
+                        </div>
+                    </twig:tstdt_Sidebar:MenuButton>
+                </twig:tstdt_Sidebar:MenuItem>
+            </twig:tstdt_Sidebar:Menu>
+        </twig:tstdt_Sidebar:Header>
+
+        <twig:tstdt_Sidebar:Content>
+            <twig:tstdt_Sidebar:Group>
+                <twig:tstdt_Sidebar:GroupLabel>Overview</twig:tstdt_Sidebar:GroupLabel>
+                <twig:tstdt_Sidebar:GroupContent>
+                    <twig:tstdt_Sidebar:Menu>
+                        <twig:tstdt_Sidebar:MenuItem>
+                            <twig:tstdt_Sidebar:MenuButton
+                                as="a"
+                                href="{{ path('app_demo') }}"
+                                tooltip="Dashboard"
+                                :active="current_route == 'app_demo'"
+                            >
+                                <twig:ux:icon name="lucide:layout-dashboard" aria-hidden="true" />
+                                <span>Dashboard</span>
+                            </twig:tstdt_Sidebar:MenuButton>
+                        </twig:tstdt_Sidebar:MenuItem>
+                    </twig:tstdt_Sidebar:Menu>
+                </twig:tstdt_Sidebar:GroupContent>
+            </twig:tstdt_Sidebar:Group>
+
+            <twig:tstdt_Sidebar:Group>
+                <twig:tstdt_Sidebar:GroupLabel>Platform</twig:tstdt_Sidebar:GroupLabel>
+                <twig:tstdt_Sidebar:GroupContent>
+                    <twig:tstdt_Sidebar:Menu>
+                        <twig:tstdt_Sidebar:MenuItem>
+                            <twig:tstdt_Collapsible :open="catalog_open" class="group/collapsible">
+                                <twig:tstdt_Collapsible:Trigger>
+                                    <twig:tstdt_Sidebar:MenuButton {{ ...collapsible_trigger_attrs }} tooltip="Catalog" :active="catalog_open">
+                                        <twig:ux:icon name="lucide:package" aria-hidden="true" />
+                                        <span>Catalog</span>
+                                        <twig:ux:icon name="lucide:chevron-right" class="ms-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" aria-hidden="true" />
+                                    </twig:tstdt_Sidebar:MenuButton>
+                                </twig:tstdt_Collapsible:Trigger>
+                                <twig:tstdt_Collapsible:Content>
+                                    <twig:tstdt_Sidebar:MenuSub>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_catalog_products') }}" :active="current_route == 'app_catalog_products'">
+                                                <span>Products</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_catalog_categories') }}" :active="current_route == 'app_catalog_categories'">
+                                                <span>Categories</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                    </twig:tstdt_Sidebar:MenuSub>
+                                </twig:tstdt_Collapsible:Content>
+                            </twig:tstdt_Collapsible>
+                        </twig:tstdt_Sidebar:MenuItem>
+
+                        <twig:tstdt_Sidebar:MenuItem>
+                            <twig:tstdt_Collapsible :open="sales_open" class="group/collapsible">
+                                <twig:tstdt_Collapsible:Trigger>
+                                    <twig:tstdt_Sidebar:MenuButton {{ ...collapsible_trigger_attrs }} tooltip="Sales" :active="sales_open">
+                                        <twig:ux:icon name="lucide:shopping-cart" aria-hidden="true" />
+                                        <span>Sales</span>
+                                        <twig:ux:icon name="lucide:chevron-right" class="ms-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" aria-hidden="true" />
+                                    </twig:tstdt_Sidebar:MenuButton>
+                                </twig:tstdt_Collapsible:Trigger>
+                                <twig:tstdt_Collapsible:Content>
+                                    <twig:tstdt_Sidebar:MenuSub>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_sales_orders') }}" :active="current_route == 'app_sales_orders'">
+                                                <span>Orders</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_sales_customers') }}" :active="current_route == 'app_sales_customers'">
+                                                <span>Customers</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_sales_order_items') }}" :active="current_route == 'app_sales_order_items'">
+                                                <span>Order items</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                    </twig:tstdt_Sidebar:MenuSub>
+                                </twig:tstdt_Collapsible:Content>
+                            </twig:tstdt_Collapsible>
+                        </twig:tstdt_Sidebar:MenuItem>
+
+                        <twig:tstdt_Sidebar:MenuItem>
+                            <twig:tstdt_Collapsible :open="settings_open" class="group/collapsible">
+                                <twig:tstdt_Collapsible:Trigger>
+                                    <twig:tstdt_Sidebar:MenuButton {{ ...collapsible_trigger_attrs }} tooltip="Settings" :active="settings_open">
+                                        <twig:ux:icon name="lucide:settings-2" aria-hidden="true" />
+                                        <span>Settings</span>
+                                        <twig:ux:icon name="lucide:chevron-right" class="ms-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90" aria-hidden="true" />
+                                    </twig:tstdt_Sidebar:MenuButton>
+                                </twig:tstdt_Collapsible:Trigger>
+                                <twig:tstdt_Collapsible:Content>
+                                    <twig:tstdt_Sidebar:MenuSub>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_settings_demo_data') }}" :active="current_route == 'app_settings_demo_data'">
+                                                <span>Demo data</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                        <twig:tstdt_Sidebar:MenuSubItem>
+                                            <twig:tstdt_Sidebar:MenuSubButton href="{{ path('app_settings_preferences') }}" :active="current_route == 'app_settings_preferences'">
+                                                <span>Preferences</span>
+                                            </twig:tstdt_Sidebar:MenuSubButton>
+                                        </twig:tstdt_Sidebar:MenuSubItem>
+                                    </twig:tstdt_Sidebar:MenuSub>
+                                </twig:tstdt_Collapsible:Content>
+                            </twig:tstdt_Collapsible>
+                        </twig:tstdt_Sidebar:MenuItem>
+                    </twig:tstdt_Sidebar:Menu>
+                </twig:tstdt_Sidebar:GroupContent>
+            </twig:tstdt_Sidebar:Group>
+        </twig:tstdt_Sidebar:Content>
+
+        <twig:tstdt_Sidebar:Footer>
+            <twig:tstdt_Sidebar:Menu>
+                <twig:tstdt_Sidebar:MenuItem>
+                    <twig:tstdt_DropdownMenu id="admin-account" side="top" class="w-full block">
+                        <twig:tstdt_DropdownMenu:Trigger>
+                            <twig:tstdt_Sidebar:MenuButton {{ ...dropdown_menu_trigger_attrs }} size="lg" tooltip="Admin">
+                                <twig:tstdt_Avatar class="size-8 rounded-lg">
+                                    <twig:tstdt_Avatar:Fallback class="rounded-lg">AD</twig:tstdt_Avatar:Fallback>
+                                </twig:tstdt_Avatar>
+                                <div class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                                    <span class="truncate font-semibold">Admin</span>
+                                    <span class="truncate text-xs">admin@example.test</span>
+                                </div>
+                                <twig:ux:icon name="lucide:chevrons-up-down" class="ms-auto size-4 group-data-[collapsible=icon]:hidden" aria-hidden="true" />
+                            </twig:tstdt_Sidebar:MenuButton>
+                        </twig:tstdt_DropdownMenu:Trigger>
+                        <twig:tstdt_DropdownMenu:Content class="w-56">
+                            <twig:tstdt_DropdownMenu:Label>My account</twig:tstdt_DropdownMenu:Label>
+                            <twig:tstdt_DropdownMenu:Separator />
+                            <twig:tstdt_DropdownMenu:Item>
+                                <twig:ux:icon name="lucide:user" aria-hidden="true" />
+                                Profile
+                            </twig:tstdt_DropdownMenu:Item>
+                            <twig:tstdt_DropdownMenu:Item>
+                                <twig:ux:icon name="lucide:bell" aria-hidden="true" />
+                                Notifications
+                            </twig:tstdt_DropdownMenu:Item>
+                            <twig:tstdt_DropdownMenu:Separator />
+                            <twig:tstdt_DropdownMenu:Item as="a" href="{{ path('app_logout') }}" variant="destructive">
+                                <twig:ux:icon name="lucide:log-out" aria-hidden="true" />
+                                Log out
+                            </twig:tstdt_DropdownMenu:Item>
+                        </twig:tstdt_DropdownMenu:Content>
+                    </twig:tstdt_DropdownMenu>
+                </twig:tstdt_Sidebar:MenuItem>
+            </twig:tstdt_Sidebar:Menu>
+        </twig:tstdt_Sidebar:Footer>
+        <twig:tstdt_Sidebar:Rail />
+    </twig:tstdt_Sidebar>
+
+    <twig:tstdt_Sidebar:Inset>
+        <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+            <twig:tstdt_Sidebar:Trigger class="-ms-1">
+                <twig:ux:icon name="lucide:panel-left" aria-hidden="true" />
+                <span class="sr-only">Toggle sidebar</span>
+            </twig:tstdt_Sidebar:Trigger>
+            <twig:tstdt_Separator orientation="vertical" class="mx-1 h-4" />
+            <div class="flex flex-1 items-center justify-between gap-2">
+                <div class="min-w-0">
+                    {% if page_title|trim %}
+                        <h1 class="truncate text-sm font-medium">{{ page_title|striptags|trim }}</h1>
+                    {% else %}
+                        <span class="text-sm text-muted-foreground">Admin</span>
+                    {% endif %}
+                </div>
+                {% if page_actions|trim %}
+                    <div class="flex items-center gap-2">{{ page_actions|raw }}</div>
+                {% endif %}
+            </div>
+        </header>
+        <main class="flex flex-1 flex-col gap-4 p-4">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div
+                        class="rounded-lg border px-4 py-3 text-sm {{ label == 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : (label == 'error' ? 'border-destructive/30 bg-destructive/10 text-destructive' : 'border-border bg-muted/50 text-foreground') }}"
+                        role="status"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {{ page_content|raw }}
+        </main>
+    </twig:tstdt_Sidebar:Inset>
+</twig:tstdt_Sidebar:Provider>
