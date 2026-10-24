@@ -1,0 +1,22 @@
+{
+    "manifests": {
+        "johnnymick/symfony-tanstack-table-shadcn-ui-toolkit": {
+            "manifest": {
+                "post-install-output": [
+                    "",
+                    "<bg=blue;fg=white> Symfony TanStack Table shadcn/ui Toolkit </>",
+                    "",
+                    "  Run: <comment>php bin/console make:tstdt-data-table --with-controllers --with-icons</>",
+                    "  Theme: <comment>php bin/console make:tstdt-theme --as-app-css</>",
+                    "  Docs: see vendor/johnnymick/symfony-tanstack-table-shadcn-ui-toolkit/README.md",
+                    ""
+                ],
+                "copy-from-package": {
+                    "post-install.txt": "%CONFIG%/%PACKAGE%/post-install.txt"
+                }
+            },
+            "ref": "main"
+        }
+    },
+    "is_contrib": true
+}

@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  bundle:
+    name: Bundle (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - run: composer validate --strict
+
+      - run: composer install --prefer-dist --no-progress
+
+      - run: composer test
+
+      - name: Skeleton sync
+        run: bash bin/check-skeleton-sync.sh
+
+  demo:
+    name: Demo smoke
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          extensions: pdo_sqlite
+          tools: composer:v2
+
+      - run: composer install --prefer-dist --no-progress
+
+      - name: Prepare test database
+        run: |
+          mkdir -p var
+          php bin/console doctrine:database:create --env=test --if-not-exists --no-interaction
+          php bin/console doctrine:schema:create --env=test --no-interaction
+
+      - name: Smoke tests
+        run: php bin/phpunit tests/Controller/CatalogSmokeTest.php
