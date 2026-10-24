@@ -50,6 +50,12 @@ jobs:
 
       - run: composer install --prefer-dist --no-progress
 
+      - name: Install front-end assets
+        run: |
+          # assets/vendor is gitignored; Tailwind must be pre-built for AssetMapper in test.
+          php bin/console importmap:install --no-interaction
+          php bin/console tailwind:build --no-interaction
+
       - name: Prepare test database
         run: |
           # SQLite: file is created on connect; database:create is unsupported on this platform.
