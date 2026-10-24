@@ -3,7 +3,7 @@
 Symfony demo for TanStack Table and shadcn/ui toolkit bundle.
 
 ## Requirements
-- PHP 8.2 or newer (8.3+ recommended)
+- PHP 8.4 or newer (matches `composer.lock` / Doctrine UX / PHPUnit 13)
 
 ## Install
 ```shell
