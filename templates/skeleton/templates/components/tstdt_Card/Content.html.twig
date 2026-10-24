@@ -1,0 +1,8 @@
+<div
+    data-slot="card-content"
+    {{ attributes.without('class') }}
+    class="{{ ('px-(--card-spacing) ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The main content area of the card. -#}
+    {%- block content %}{% endblock -%}
+</div>

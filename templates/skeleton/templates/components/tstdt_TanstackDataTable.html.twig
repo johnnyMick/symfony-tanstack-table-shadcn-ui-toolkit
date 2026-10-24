@@ -1,0 +1,358 @@
+{%- props
+    ## array Table config from TanstackDataTable::toArray() (passed as data-config to Stimulus).
+    config = {}
+-%}
+{%- set tableId = config.id ?? ('tstdt_' ~ random()) -%}
+{%- set columns = config.columns ?? [] -%}
+{%- set pageSize = config.pageSize ?? 25 -%}
+{%- set headerActions = config.headerActions ?? [] -%}
+{%- set bulkActions = config.bulkActions ?? [] -%}
+{%- set columnVisibility = config.columnVisibility ?? true -%}
+{%- set filterPlaceholder = config.filterPlaceholder ?? 'Filter…' -%}
+{%- set filterColumns = [] -%}
+{%- for column in columns -%}
+    {%- set fieldId = column.accessorKey ?? column.id ?? null -%}
+    {%- if fieldId -%}
+        {%- set filterColumns = filterColumns|merge([{ id: fieldId, header: column.header ?? fieldId }]) -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- set defaultFilterField = filterColumns[0].id ?? null -%}
+{%- set defaultFilterLabel = filterColumns[0].header ?? 'Field' -%}
+<twig:tstdt_Card {{ ...attributes }}>
+    {% if config.title or config.description %}
+        <twig:tstdt_Card:Header>
+            {% if config.title %}
+                <twig:tstdt_Card:Title>{{ config.title }}</twig:tstdt_Card:Title>
+            {% endif %}
+            {% if config.description %}
+                <twig:tstdt_Card:Description>{{ config.description }}</twig:tstdt_Card:Description>
+            {% endif %}
+        </twig:tstdt_Card:Header>
+    {% endif %}
+    <twig:tstdt_Card:Content>
+<div
+    data-controller="tanstack-table"
+    data-config="{{ config|json_encode|e('html_attr') }}"
+    class="space-y-4"
+>
+    {% if bulkActions is not empty or headerActions is not empty %}
+        <div class="flex flex-wrap items-center gap-2" data-slot="tstdt_table-header-actions">
+            {% if bulkActions is not empty %}
+                <div class="flex flex-wrap items-center gap-2" data-slot="tstdt_table-bulk-actions">
+                    <twig:tstdt_Select
+                        id="{{ tableId }}-bulk-action"
+                        value=""
+                        data-tanstack-table-target="bulkAction"
+                        data-action="select:change->tanstack-table#changeBulkAction"
+                    >
+                        <twig:tstdt_Select:Trigger size="sm" class="w-48" data-tanstack-table-target="bulkActionTrigger" disabled="disabled">
+                            <twig:tstdt_Select:Value placeholder="Bulk actions" />
+                        </twig:tstdt_Select:Trigger>
+                        <twig:tstdt_Select:Content position="popper" side="bottom">
+                            <twig:tstdt_Select:Group>
+                                {% for action in bulkActions %}
+                                    <twig:tstdt_Select:Item
+                                        value="{{ action.id }}"
+                                        data-bulk-action-event="{{ action.event|default('tanstack-table:bulk-' ~ action.id) }}"
+                                    >{{ action.label }}</twig:tstdt_Select:Item>
+                                {% endfor %}
+                            </twig:tstdt_Select:Group>
+                        </twig:tstdt_Select:Content>
+                    </twig:tstdt_Select>
+                    <twig:tstdt_Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        data-tanstack-table-target="bulkActionRun"
+                        data-action="tanstack-table#runBulkAction"
+                        disabled="disabled"
+                        title="Run action"
+                        aria-label="Run bulk action"
+                    >
+                        <twig:ux:icon name="lucide:play" class="size-4" aria-hidden="true" />
+                    </twig:tstdt_Button>
+                    <span
+                        data-tanstack-table-target="bulkSelectedCount"
+                        class="text-sm text-muted-foreground tabular-nums"
+                        hidden
+                    ></span>
+                </div>
+            {% endif %}
+
+            {% if headerActions is not empty %}
+                <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
+                    {% for action in headerActions %}
+                        {% set actionId = action.id|default(loop.index0) %}
+                        {% set actionEvent = action.event|default('tanstack-table:' ~ actionId) %}
+                        {% set actionAttrs = {
+                            type: action.type|default('button'),
+                            variant: action.variant|default('default'),
+                            size: action.size|default('sm'),
+                            'data-header-action': actionId,
+                            'data-header-action-event': actionEvent,
+                            'data-action': action.action|default('click->tanstack-table#headerAction'),
+                            'aria-label': action.label,
+                            title: action.label,
+                        } %}
+                        <twig:tstdt_Button {{ ...actionAttrs }}>
+                            {% if action.icon %}
+                                <twig:ux:icon name="{{ action.icon }}" class="size-4" aria-hidden="true" />
+                            {% endif %}
+                            {{ action.label }}
+                        </twig:tstdt_Button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="relative w-full overflow-x-auto border border-[color:var(--tstdt-border)]" data-slot="tstdt_table-container">
+        <div data-tanstack-table-target="table"></div>
+        <div
+            data-tanstack-table-target="loading"
+            data-slot="tstdt_table-loading"
+            hidden
+            aria-hidden="true"
+            class="absolute inset-0 z-10 flex items-center justify-center bg-background/70 backdrop-blur-[1px]"
+        >
+            <div class="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm">
+                <twig:ux:icon name="lucide:refresh-cw" class="size-4 animate-spin" aria-hidden="true" />
+                <span>Loading…</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-2 text-sm text-muted-foreground">
+        <div
+            id="{{ tableId }}-search-panel"
+            data-tanstack-table-target="searchPanel"
+            data-state="closed"
+            hidden
+            aria-hidden="true"
+            class="flex flex-wrap items-center gap-2"
+        >
+            <div class="flex min-w-0 max-w-full flex-1 items-center gap-2 sm:max-w-[75%]">
+                <label for="{{ tableId }}-filter-input">Search</label>
+                <twig:tstdt_Input
+                    id="{{ tableId }}-filter-input"
+                    type="search"
+                    placeholder="{{ filterPlaceholder }}"
+                    data-tanstack-table-target="filter"
+                    data-action="keydown.enter->tanstack-table#applyFilter keydown.esc->tanstack-table#closeSearch"
+                    class="min-w-0 flex-1 max-w-124 flex-none"
+                />
+                {% if filterColumns is not empty %}
+                    <twig:tstdt_Select
+                        id="{{ tableId }}-filter-field"
+                        value="{{ defaultFilterField }}"
+                        data-action="select:change->tanstack-table#changeFilterField"
+                        class="m-w-12"
+                    >
+                        <twig:tstdt_Select:Trigger size="sm" class="w-36 shrink-0">
+                            <twig:tstdt_Select:Value placeholder="{{ defaultFilterLabel }}" />
+                        </twig:tstdt_Select:Trigger>
+                        <twig:tstdt_Select:Content position="popper" side="top">
+                            <twig:tstdt_Select:Group>
+                                {% for field in filterColumns %}
+                                    <twig:tstdt_Select:Item value="{{ field.id }}">{{ field.header }}</twig:tstdt_Select:Item>
+                                {% endfor %}
+                            </twig:tstdt_Select:Group>
+                        </twig:tstdt_Select:Content>
+                    </twig:tstdt_Select>
+
+                    <twig:tstdt_Select
+                        id="{{ tableId }}-filter-operator"
+                        value="startsWith"
+                        data-action="select:change->tanstack-table#changeFilterOperator"
+                        class="m-w-12"
+                    >
+                        <twig:tstdt_Select:Trigger size="sm" class="w-36 shrink-0">
+                            <twig:tstdt_Select:Value placeholder="Starts with" />
+                        </twig:tstdt_Select:Trigger>
+                        <twig:tstdt_Select:Content position="popper" side="top">
+                            <twig:tstdt_Select:Group>
+                                <twig:tstdt_Select:Item value="startsWith">Starts with</twig:tstdt_Select:Item>
+                                <twig:tstdt_Select:Item value="endsWith">Ends with</twig:tstdt_Select:Item>
+                                <twig:tstdt_Select:Item value="equals">Equal to</twig:tstdt_Select:Item>
+                                <twig:tstdt_Select:Item value="contains">Contains</twig:tstdt_Select:Item>
+                            </twig:tstdt_Select:Group>
+                        </twig:tstdt_Select:Content>
+                    </twig:tstdt_Select>
+                {% endif %}
+                <twig:tstdt_Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tanstack-table-target="searchSubmit"
+                    data-action="tanstack-table#applyFilter"
+                    title="Searchr"
+                    aria-label="Searchr"
+                >
+                    <span data-search-submit-idle class="inline-flex">
+                        <twig:ux:icon name="lucide:play" class="size-4" aria-hidden="true" />
+                    </span>
+                    <span data-search-submit-loading class="inline-flex" hidden>
+                        <twig:ux:icon name="lucide:loader-circle" class="size-4 animate-spin" aria-hidden="true" />
+                    </span>
+                </twig:tstdt_Button>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <twig:tstdt_Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                data-tanstack-table-target="searchToggle"
+                data-action="tanstack-table#toggleSearch"
+                aria-expanded="false"
+                aria-controls="{{ tableId }}-search-panel"
+                aria-label="Show search"
+                title="Search"
+            >
+                <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true" />
+            </twig:tstdt_Button>
+
+            {% if columnVisibility %}
+                <twig:tstdt_DropdownMenu id="{{ tableId }}-columns" side="top" align="start">
+                    <twig:tstdt_DropdownMenu:Trigger>
+                        <twig:tstdt_Button
+                            {{ ...dropdown_menu_trigger_attrs }}
+                            type="button"
+                            variant="outline"
+                            size="icon-sm"
+                            aria-label="Columns"
+                            title="Columns"
+                        >
+                            <twig:ux:icon name="lucide:settings-2" class="size-4" aria-hidden="true" />
+                        </twig:tstdt_Button>
+                    </twig:tstdt_DropdownMenu:Trigger>
+                    <twig:tstdt_DropdownMenu:Content class="w-52">
+                        <twig:tstdt_DropdownMenu:Label>Columns</twig:tstdt_DropdownMenu:Label>
+                        <twig:tstdt_DropdownMenu:Separator />
+                        <twig:tstdt_DropdownMenu:Group>
+                            {% for column in columns %}
+                                {% set fieldId = column.accessorKey ?? column.id ?? null %}
+                                {% if fieldId %}
+                                    <twig:tstdt_DropdownMenu:CheckboxItem
+                                        checked="checked"
+                                        :closeOnSelect="false"
+                                        data-column-id="{{ fieldId }}"
+                                        data-tanstack-table-target="columnToggle"
+                                        data-action="click->tanstack-table#toggleColumnVisibility"
+                                    >
+                                        {{ column.header ?? fieldId }}
+                                    </twig:tstdt_DropdownMenu:CheckboxItem>
+                                {% endif %}
+                            {% endfor %}
+                        </twig:tstdt_DropdownMenu:Group>
+                    </twig:tstdt_DropdownMenu:Content>
+                </twig:tstdt_DropdownMenu>
+            {% endif %}
+
+            <div class="ml-auto flex flex-wrap items-center gap-2">
+                <twig:tstdt_Select
+                    id="{{ tableId }}-page-size"
+                    value="{{ pageSize }}"
+                    data-action="select:change->tanstack-table#changePageSize"
+                >
+                    <twig:tstdt_Select:Trigger size="sm" class="w-16">
+                        <twig:tstdt_Select:Value placeholder="{{ pageSize }}" />
+                    </twig:tstdt_Select:Trigger>
+                    <twig:tstdt_Select:Content position="popper" side="top">
+                        <twig:tstdt_Select:Group>
+                            {% for size in [10, 20, 25, 50, 100] %}
+                                <twig:tstdt_Select:Item value="{{ size }}">{{ size }}</twig:tstdt_Select:Item>
+                            {% endfor %}
+                        </twig:tstdt_Select:Group>
+                    </twig:tstdt_Select:Content>
+                </twig:tstdt_Select>
+
+                <twig:tstdt_Separator orientation="vertical" class="mx-1 h-6" />
+
+                <twig:tstdt_Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tanstack-table-target="first"
+                    data-action="tanstack-table#firstPage"
+                    aria-label="First page"
+                    title="First page"
+                >
+                    <twig:ux:icon name="lucide:chevrons-left" class="size-4" aria-hidden="true" />
+                </twig:tstdt_Button>
+
+                <twig:tstdt_Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tanstack-table-target="previous"
+                    data-action="tanstack-table#previousPage"
+                    aria-label="Previous page"
+                    title="Previous page"
+                >
+                    <twig:ux:icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
+                </twig:tstdt_Button>
+
+                <twig:tstdt_Input
+                    type="number"
+                    name="tstdt_page-{{ tableId }}"
+                    min="1"
+                    inputmode="numeric"
+                    data-tanstack-table-target="pageInput"
+                    data-action="change->tanstack-table#goToPage keydown.enter->tanstack-table#goToPage"
+                    aria-label="Page"
+                    class="h-7 w-12 px-1 text-center tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                />
+
+                <span class="whitespace-nowrap">
+                    of <span data-tanstack-table-target="pageCount">1</span>
+                </span>
+
+                <twig:tstdt_Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tanstack-table-target="next"
+                    data-action="tanstack-table#nextPage"
+                    aria-label="Next page"
+                    title="Next page"
+                >
+                    <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
+                </twig:tstdt_Button>
+
+                <twig:tstdt_Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tanstack-table-target="last"
+                    data-action="tanstack-table#lastPage"
+                    aria-label="Last page"
+                    title="Last page"
+                >
+                    <twig:ux:icon name="lucide:chevrons-right" class="size-4" aria-hidden="true" />
+                </twig:tstdt_Button>
+
+                <twig:tstdt_Separator orientation="vertical" class="mx-1 h-6" />
+
+                <twig:tstdt_Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tanstack-table-target="refreshButton"
+                    data-action="tanstack-table#refresh"
+                    aria-label="Refresh"
+                    title="Refresh"
+                >
+                    <twig:ux:icon name="lucide:refresh-cw" data-refresh-icon class="size-4" aria-hidden="true" />
+                </twig:tstdt_Button>
+
+                <span class="whitespace-nowrap tabular-nums">
+                    <span data-tanstack-table-target="totalCount">0</span> rows
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+    </twig:tstdt_Card:Content>
+</twig:tstdt_Card>
