@@ -1,0 +1,440 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set counts = collector.counts %}
+    {% if collector.hasData %}
+        {% set icon %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M3 15h18M9 3v18"/>
+            </svg>
+            <span class="sf-toolbar-value">{{ counts.events }}</span>
+        {% endset %}
+        {% set text %}
+            <div class="sf-toolbar-info-piece">
+                <b>TableQuery</b>
+                <span class="sf-toolbar-status">{{ counts.tableQueries }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Applies</b>
+                <span>{{ counts.applies }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Select events</b>
+                <span>{{ counts.selectEvents }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Filter events</b>
+                <span>{{ counts.filterEvents }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Join events</b>
+                <span>{{ counts.joinEvents }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Sort events</b>
+                <span>{{ counts.sortEvents|default(0) }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Transform events</b>
+                <span>{{ counts.transformEvents }}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Stopped</b>
+                <span>{{ counts.stoppedEvents }}</span>
+            </div>
+        {% endset %}
+        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+    {% endif %}
+{% endblock %}
+
+{% block menu %}
+    <span class="label {{ not collector.hasData ? 'disabled' }}">
+        <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M3 15h18M9 3v18"/>
+            </svg>
+        </span>
+        <strong>TanStack-Datatable</strong>
+        {% if collector.hasData %}
+            <span class="count">
+                <span>{{ collector.counts.events }}</span>
+            </span>
+        {% endif %}
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>TanStack-Datatable</h2>
+    <p class="help">
+        Debug data for <code>TableQuery</code>, <code>DatatableQueryApplier</code>,
+        <code>ApplyJoinEvent</code> / <code>ApplySelectEvent</code> / <code>ApplyFilterEvent</code>,
+        and <code>TransformRowsEvent</code>.
+    </p>
+
+    {% if not collector.hasData %}
+        <div class="empty empty-panel">
+            <p>No datatable activity was recorded for this request.</p>
+        </div>
+    {% else %}
+        <div class="metrics">
+            <div class="metric">
+                <span class="value">{{ collector.counts.tableQueries }}</span>
+                <span class="label">TableQuery</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.applies }}</span>
+                <span class="label">Applies</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.selectEvents }}</span>
+                <span class="label">Select events</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.filterEvents }}</span>
+                <span class="label">Filter events</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.joinEvents }}</span>
+                <span class="label">Join events</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.sortEvents|default(0) }}</span>
+                <span class="label">Sort events</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.transformEvents }}</span>
+                <span class="label">Transform events</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{ collector.counts.stoppedEvents }}</span>
+                <span class="label">Stopped</span>
+            </div>
+        </div>
+
+        <h3>TableQuery</h3>
+        {% if collector.rawTableQueries is empty %}
+            <div class="empty"><p>No <code>TableQuery::fromRequest()</code> calls.</p></div>
+        {% else %}
+            {% for query in collector.rawTableQueries %}
+                <h4>Query #{{ loop.index }}{% if query.source %} <small class="text-muted">{{ query.source }}</small>{% endif %}</h4>
+                <table>
+                    <tbody>
+                        <tr><th>page</th><td>{{ query.page }}</td></tr>
+                        <tr><th>pageSize</th><td>{{ query.pageSize }}</td></tr>
+                        <tr><th>offset</th><td>{{ query.offset }}</td></tr>
+                        <tr>
+                            <th>fields</th>
+                            <td>
+                                {% if query.fields is empty %}
+                                    <span class="text-muted">—</span>
+                                {% else %}
+                                    <code>{{ query.fields|join(', ') }}</code>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>filters</th>
+                            <td>
+                                {% if query.filters is empty %}
+                                    <span class="text-muted">—</span>
+                                {% else %}
+                                    <table>
+                                        <thead>
+                                            <tr><th>field</th><th>operator</th><th>value</th><th>valueTo</th></tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for filter in query.filters %}
+                                            <tr>
+                                                <td><code>{{ filter.field }}</code></td>
+                                                <td><code>{{ filter.operator }}</code></td>
+                                                <td><code>{{ filter.value }}</code></td>
+                                                <td><code>{{ filter.valueTo|default('—') }}</code></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endfor %}
+        {% endif %}
+
+        <h3>DatatableQueryApplier</h3>
+        {% if collector.rawApplies is empty %}
+            <div class="empty"><p>No <code>applySelects</code> / <code>applyFilters</code> / <code>transformRows</code> calls.</p></div>
+        {% else %}
+            {% for apply in collector.rawApplies %}
+                {% set applyEvents = apply.events|default([]) %}
+                {% set stoppedCount = applyEvents|filter(e => e.propagationStopped)|length %}
+                {% set badgeClass = apply.type == 'filters' ? 'primary' : (apply.type == 'transform' ? 'success' : 'secondary') %}
+                <div class="card status-{{ apply.type == 'filters' ? 'info' : (apply.type == 'transform' ? 'success' : '') }}" style="margin-bottom:1rem">
+                    <strong>
+                        #{{ loop.index }}
+                        <span class="badge badge-{{ badgeClass }}">{{ apply.type }}</span>
+                        {% if apply.type != 'transform' %}
+                            alias <code>{{ apply.rootAlias|default('—') }}</code>
+                        {% else %}
+                            <code>{{ apply.rowCount|default(0) }}</code> row{{ apply.rowCount|default(0) == 1 ? '' : 's' }}
+                        {% endif %}
+                        <span class="badge">{{ applyEvents|length }} event{{ applyEvents|length == 1 ? '' : 's' }}</span>
+                        {% if stoppedCount > 0 %}
+                            <span class="badge status-warning">{{ stoppedCount }} stopped</span>
+                        {% endif %}
+                    </strong>
+
+                    <div style="margin-top:.75rem;overflow-x:auto;-webkit-overflow-scrolling:touch">
+                        <table class="text-small" style="width:max-content;min-width:100%;margin:0">
+                            <tbody>
+                                {% if apply.type == 'transform' %}
+                                    <tr>
+                                        <th style="width:8rem;white-space:nowrap">Columns</th>
+                                        <td style="white-space:nowrap">
+                                            {% if apply.columns|default([]) is empty %}
+                                                <span class="text-muted">—</span>
+                                            {% else %}
+                                                <code>{{ apply.columns|join(', ') }}</code>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="white-space:nowrap">Changed</th>
+                                        <td style="white-space:nowrap">
+                                            {% if apply.changedColumns|default([]) is empty %}
+                                                <span class="text-muted">none</span>
+                                            {% else %}
+                                                <code>{{ apply.changedColumns|join(', ') }}</code>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <th style="width:8rem;white-space:nowrap">{% if apply.type == 'selects' %}Fields{% else %}Filters{% endif %}</th>
+                                        <td style="white-space:nowrap">
+                                            {% if apply.type == 'selects' %}
+                                                {% if apply.fields|default([]) is empty %}
+                                                    <span class="text-muted">—</span>
+                                                {% else %}
+                                                    <code>{{ apply.fields|join(', ') }}</code>
+                                                {% endif %}
+                                            {% elseif apply.filters|default([]) is empty %}
+                                                <span class="text-muted">—</span>
+                                            {% else %}
+                                                {% for filter in apply.filters %}
+                                                    <code>{{ filter.field }}</code>
+                                                    <code>{{ filter.operator }}</code>
+                                                    <code>{{ filter.value|default('') }}</code>
+                                                    {% if filter.valueTo is defined and filter.valueTo is not same as(null) and filter.valueTo is not same as('') %}
+                                                        → <code>{{ filter.valueTo }}</code>
+                                                    {% endif %}{% if not loop.last %}; {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                    <th style="white-space:nowrap">Context</th>
+                                    <td>
+                                        {% if apply.context|default({}) is empty %}
+                                            <span class="text-muted">—</span>
+                                        {% else %}
+                                            <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                                                <table class="text-small" style="width:max-content;min-width:100%;margin:0">
+                                                    <thead>
+                                                        <tr><th style="white-space:nowrap">Key</th><th style="white-space:nowrap">Value</th></tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for key, value in apply.context %}
+                                                        <tr>
+                                                            <td style="white-space:nowrap"><code>{{ key }}</code></td>
+                                                            <td style="white-space:nowrap">
+                                                                {% if value is iterable and value is not same as([]) %}
+                                                                    {% if value is sequence %}
+                                                                        <code>{{ value|join(', ') }}</code>
+                                                                    {% else %}
+                                                                        <code>{{ value|json_encode }}</code>
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    <code>{{ value|default('—') }}</code>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4 style="margin:1rem 0 .35rem">Events</h4>
+                    {% if applyEvents is empty %}
+                        <p class="text-muted text-small" style="margin:0">No events for this call.</p>
+                    {% elseif apply.type == 'transform' %}
+                        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                            <table class="text-small" style="width:max-content;min-width:100%;margin:0">
+                                <thead>
+                                    <tr>
+                                        <th style="white-space:nowrap">#</th>
+                                        <th style="white-space:nowrap">Type</th>
+                                        <th style="white-space:nowrap">Rows</th>
+                                        <th style="white-space:nowrap">Changed columns</th>
+                                        <th style="white-space:nowrap">Stopped</th>
+                                        <th style="white-space:nowrap">Event class</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for event in applyEvents %}
+                                    <tr>
+                                        <td class="font-normal text-muted" style="white-space:nowrap">{{ loop.index }}</td>
+                                        <td style="white-space:nowrap"><span class="badge badge-success">{{ event.type }}</span></td>
+                                        <td style="white-space:nowrap"><code>{{ event.rowCount|default(0) }}</code></td>
+                                        <td style="white-space:nowrap">
+                                            {% if event.changedColumns|default([]) is empty %}
+                                                <span class="text-muted">none</span>
+                                            {% else %}
+                                                <code>{{ event.changedColumns|join(', ') }}</code>
+                                            {% endif %}
+                                        </td>
+                                        <td style="white-space:nowrap">
+                                            {% if event.propagationStopped %}
+                                                <span class="badge status-warning">yes</span>
+                                            {% else %}
+                                                <span class="text-muted">no</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="white-space:nowrap"><code>{{ event.event }}</code></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                            <table class="text-small" style="width:max-content;min-width:100%;margin:0">
+                                <thead>
+                                    <tr>
+                                        <th style="white-space:nowrap">#</th>
+                                        <th style="white-space:nowrap">Type</th>
+                                        <th style="white-space:nowrap">Field</th>
+                                        <th style="white-space:nowrap">Operator / value</th>
+                                        <th style="white-space:nowrap">Expression / join</th>
+                                        <th style="white-space:nowrap">Stopped</th>
+                                        <th style="white-space:nowrap">Event class</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for event in applyEvents %}
+                                    <tr>
+                                        <td class="font-normal text-muted" style="white-space:nowrap">{{ loop.index }}</td>
+                                        <td style="white-space:nowrap">
+                                            <span class="badge badge-{{ event.type == 'filter' ? 'primary' : (event.type == 'join' ? 'warning' : 'secondary') }}">{{ event.type }}</span>
+                                        </td>
+                                        <td style="white-space:nowrap"><code>{{ event.field }}</code></td>
+                                        <td style="white-space:nowrap">
+                                            {% if event.type == 'filter' %}
+                                                <code>{{ event.operator|default('—') }}</code>
+                                                <code>{{ event.value|default('') }}</code>
+                                                {% if event.valueTo is defined and event.valueTo is not same as(null) and event.valueTo is not same as('') %}
+                                                    → <code>{{ event.valueTo }}</code>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="white-space:nowrap">
+                                            {% if event.type == 'join' %}
+                                                <code>{{ (event.joinType|default('left'))|upper }} JOIN {{ event.joinPath|default('?') }} {{ event.joinAlias|default('?') }}</code>
+                                                {% if event.joinOutcome is defined and event.joinOutcome %}
+                                                    <span class="badge status-{{ event.joinOutcome == 'applied' ? 'success' : 'warning' }}">{{ event.joinOutcome }}</span>
+                                                {% endif %}
+                                            {% elseif event.type == 'sort' %}
+                                                <code>{{ event.expression|default('—') }} {{ event.direction|default('asc')|upper }}</code>
+                                            {% else %}
+                                                <code>{{ event.expression|default('—') }}</code>
+                                            {% endif %}
+                                        </td>
+                                        <td style="white-space:nowrap">
+                                            {% if event.propagationStopped %}
+                                                <span class="badge status-warning">yes</span>
+                                            {% else %}
+                                                <span class="text-muted">no</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="white-space:nowrap"><code>{{ event.event }}</code></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if apply.type == 'transform' %}
+                        {% if apply.sampleBefore is defined or apply.sampleAfter is defined %}
+                            <h4 style="margin:1rem 0 .35rem">Sample rows (≤3)</h4>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                                <div>
+                                    <strong class="text-small">Before</strong>
+                                    <pre class="text-small" style="white-space:pre-wrap;margin:.35rem 0 0;padding:.75rem;background:var(--sf-gray-50, #f8fafc);border:1px solid var(--sf-gray-200, #e2e8f0);border-radius:.4rem;overflow:auto">{{ apply.sampleBefore|default([])|json_encode }}</pre>
+                                </div>
+                                <div>
+                                    <strong class="text-small">After</strong>
+                                    <pre class="text-small" style="white-space:pre-wrap;margin:.35rem 0 0;padding:.75rem;background:var(--sf-gray-50, #f8fafc);border:1px solid var(--sf-gray-200, #e2e8f0);border-radius:.4rem;overflow:auto">{{ apply.sampleAfter|default([])|json_encode }}</pre>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <h4 style="margin:1rem 0 .35rem">DQL</h4>
+                        <pre class="text-small" style="white-space:pre-wrap;margin:0;padding:.75rem;background:var(--sf-gray-50, #f8fafc);border:1px solid var(--sf-gray-200, #e2e8f0);border-radius:.4rem;overflow:auto">{{ apply.dqlFormatted|default(apply.dql|default('')) }}</pre>
+
+                        {% if apply.parameters|default({}) is not empty %}
+                            <h4 style="margin:1rem 0 .35rem">Parameters</h4>
+                            <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+                                <table class="text-small" style="width:max-content;min-width:100%;margin:0">
+                                    <thead>
+                                        <tr><th style="white-space:nowrap">Name</th><th style="white-space:nowrap">Value</th></tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for name, value in apply.parameters %}
+                                        <tr>
+                                            <td style="white-space:nowrap"><code>{{ name }}</code></td>
+                                            <td style="white-space:nowrap"><code>{{ value is iterable ? value|json_encode : value }}</code></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+
+                        {% if apply.sql|default(null) %}
+                            <h4 style="margin:1rem 0 .35rem">SQL</h4>
+                            <pre class="text-small" style="white-space:pre-wrap;margin:0;padding:.75rem;background:var(--sf-gray-50, #f8fafc);border:1px solid var(--sf-gray-200, #e2e8f0);border-radius:.4rem;overflow:auto">{{ apply.sql }}</pre>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <h3>Raw dump</h3>
+        <div class="sf-tabs">
+            <div class="tab">
+                <h3 class="tab-title">TableQuery <span class="badge">{{ collector.counts.tableQueries }}</span></h3>
+                <div class="tab-content">
+                    {{ profiler_dump(collector.tableQueries, maxDepth=4) }}
+                </div>
+            </div>
+            <div class="tab">
+                <h3 class="tab-title">Applies <span class="badge">{{ collector.counts.applies }}</span></h3>
+                <div class="tab-content">
+                    {{ profiler_dump(collector.applies, maxDepth=5) }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
