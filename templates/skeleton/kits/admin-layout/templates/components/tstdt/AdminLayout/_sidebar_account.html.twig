@@ -1,0 +1,105 @@
+{# Account dropdown in the sidebar footer. Expects: user, sidebar_id
+   UI strings use the {@code tstdt} translation domain (English message ids). #}
+{% set languages = user.languages|default([]) %}
+{% set current_locale = user.locale|default('en') %}
+<twig:tstdt:Sidebar:Footer>
+    <twig:tstdt:Sidebar:Menu>
+        <twig:tstdt:Sidebar:MenuItem>
+            <twig:tstdt:DropdownMenu id="{{ sidebar_id }}-account" side="top" class="w-full block">
+                <twig:tstdt:DropdownMenu:Trigger>
+                    <twig:tstdt:Sidebar:MenuButton
+                        {{ ...dropdown_menu_trigger_attrs }}
+                        size="lg"
+                        tooltip="{{ user.tooltip|default('Account'|trans({}, 'tstdt')) }}"
+                    >
+                        <twig:tstdt:Avatar class="size-8 rounded-lg">
+                            <twig:tstdt:Avatar:Fallback class="rounded-lg">
+                                {{ user.initials|default('AD') }}
+                            </twig:tstdt:Avatar:Fallback>
+                        </twig:tstdt:Avatar>
+                        <div class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                            <span class="truncate font-semibold">{{ user.name|default('Admin') }}</span>
+                            {% if user.email|default(null) %}
+                                <span class="truncate text-xs">{{ user.email }}</span>
+                            {% endif %}
+                        </div>
+                        <twig:ux:icon
+                            name="lucide:chevrons-up-down"
+                            class="ms-auto size-4 group-data-[collapsible=icon]:hidden"
+                            aria-hidden="true"
+                        />
+                    </twig:tstdt:Sidebar:MenuButton>
+                </twig:tstdt:DropdownMenu:Trigger>
+                <twig:tstdt:DropdownMenu:Content class="w-56">
+                    <twig:tstdt:DropdownMenu:Label>
+                        {{ user.menuLabel|default('My account')|trans({}, 'tstdt') }}
+                    </twig:tstdt:DropdownMenu:Label>
+
+                    {% if user.menuItems|default([]) is not empty %}
+                        <twig:tstdt:DropdownMenu:Separator />
+                        {% for menu_item in user.menuItems %}
+                            {% set menu_variant = menu_item.variant|default('default') %}
+                            {% if menu_item.href|default(null) %}
+                                <twig:tstdt:DropdownMenu:Item as="a" href="{{ menu_item.href }}" variant="{{ menu_variant }}">
+                                    {% if menu_item.icon|default(null) %}
+                                        <twig:ux:icon name="{{ menu_item.icon }}" aria-hidden="true" />
+                                    {% endif %}
+                                    {{ menu_item.label|trans({}, 'tstdt') }}
+                                </twig:tstdt:DropdownMenu:Item>
+                            {% else %}
+                                <twig:tstdt:DropdownMenu:Item variant="{{ menu_variant }}">
+                                    {% if menu_item.icon|default(null) %}
+                                        <twig:ux:icon name="{{ menu_item.icon }}" aria-hidden="true" />
+                                    {% endif %}
+                                    {{ menu_item.label|trans({}, 'tstdt') }}
+                                </twig:tstdt:DropdownMenu:Item>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if languages is not empty %}
+                        <twig:tstdt:DropdownMenu:Separator />
+                        <twig:tstdt:DropdownMenu:Sub>
+                            <twig:tstdt:DropdownMenu:SubTrigger>
+                                <twig:ux:icon name="lucide:languages" aria-hidden="true" />
+                                {{ user.languageLabel|default('Language')|trans({}, 'tstdt') }}
+                            </twig:tstdt:DropdownMenu:SubTrigger>
+                            <twig:tstdt:DropdownMenu:SubContent class="w-44">
+                                {% for language in languages %}
+                                    {% set is_current = language.code == current_locale %}
+                                    {% if language.href|default(null) %}
+                                        <twig:tstdt:DropdownMenu:Item as="a" href="{{ language.href }}" class="{{ is_current ? 'font-medium' : '' }}">
+                                            {% if is_current %}
+                                                <twig:ux:icon name="lucide:check" aria-hidden="true" />
+                                            {% else %}
+                                                <span class="size-4 shrink-0" aria-hidden="true"></span>
+                                            {% endif %}
+                                            {{ language.label }}
+                                        </twig:tstdt:DropdownMenu:Item>
+                                    {% else %}
+                                        <twig:tstdt:DropdownMenu:Item disabled="{{ true }}" class="{{ is_current ? 'font-medium' : '' }}">
+                                            {% if is_current %}
+                                                <twig:ux:icon name="lucide:check" aria-hidden="true" />
+                                            {% else %}
+                                                <span class="size-4 shrink-0" aria-hidden="true"></span>
+                                            {% endif %}
+                                            {{ language.label }}
+                                        </twig:tstdt:DropdownMenu:Item>
+                                    {% endif %}
+                                {% endfor %}
+                            </twig:tstdt:DropdownMenu:SubContent>
+                        </twig:tstdt:DropdownMenu:Sub>
+                    {% endif %}
+
+                    {% if user.logoutHref|default(null) %}
+                        <twig:tstdt:DropdownMenu:Separator />
+                        <twig:tstdt:DropdownMenu:Item as="a" href="{{ user.logoutHref }}" variant="destructive">
+                            <twig:ux:icon name="lucide:log-out" aria-hidden="true" />
+                            {{ user.logoutLabel|default('Log out')|trans({}, 'tstdt') }}
+                        </twig:tstdt:DropdownMenu:Item>
+                    {% endif %}
+                </twig:tstdt:DropdownMenu:Content>
+            </twig:tstdt:DropdownMenu>
+        </twig:tstdt:Sidebar:MenuItem>
+    </twig:tstdt:Sidebar:Menu>
+</twig:tstdt:Sidebar:Footer>

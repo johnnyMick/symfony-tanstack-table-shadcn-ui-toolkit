@@ -1,0 +1,10 @@
+{%- set _sheet_descriptionId = inject('sheet.descriptionId') -%}
+<p
+    id="{{ _sheet_descriptionId }}"
+    data-slot="sheet-description"
+    {{ attributes.without('id').without('class') }}
+    class="{{ ('text-muted-foreground text-sm ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The descriptive text explaining the sheet purpose. -#}
+    {%- block content %}{% endblock -%}
+</p>

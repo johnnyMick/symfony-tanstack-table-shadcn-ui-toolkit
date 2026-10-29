@@ -1,0 +1,24 @@
+{# Generic confirm dialog for command-palette commands with Command::confirm(). #}
+<dialog
+    data-tstdt--command-palette-target="confirmDialog"
+    data-slot="workspace-command-confirm"
+    class="fixed top-1/2 left-1/2 z-[90] w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-popover p-4 text-sm text-popover-foreground shadow-lg backdrop:bg-black/20 open:block"
+>
+    <div class="space-y-1 pb-3">
+        <h2 data-tstdt--command-palette-target="confirmTitle" class="text-base font-semibold">{{ 'Are you sure?'|trans({}, 'tstdt') }}</h2>
+        <p data-tstdt--command-palette-target="confirmDescription" class="text-muted-foreground"></p>
+    </div>
+    <div class="flex justify-end gap-2 pt-4">
+        <twig:tstdt:Button type="button" variant="outline" data-action="click->tstdt--command-palette#cancelConfirm">
+            {{ 'Cancel'|trans({}, 'tstdt') }}
+        </twig:tstdt:Button>
+        <twig:tstdt:Button
+            type="button"
+            variant="destructive"
+            data-tstdt--command-palette-target="confirmButton"
+            data-action="click->tstdt--command-palette#acceptConfirm"
+        >
+            {{ 'Confirm'|trans({}, 'tstdt') }}
+        </twig:tstdt:Button>
+    </div>
+</dialog>

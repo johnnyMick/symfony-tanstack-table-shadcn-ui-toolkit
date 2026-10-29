@@ -1,0 +1,8 @@
+<div
+    data-slot="sidebar-header"
+    {{ attributes.without('class') }}
+    class="{{ ('flex flex-col gap-2 p-2 ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The sidebar header content. -#}
+    {%- block content %}{% endblock -%}
+</div>

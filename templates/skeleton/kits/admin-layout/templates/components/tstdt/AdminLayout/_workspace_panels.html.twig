@@ -1,0 +1,90 @@
+{# Main + slot panels for workspace tabs. Each panel hosts nested (level-2) panels.
+   Main nested-main content is loaded via AJAX from the main tab data-open-url.
+   Expects: tab_count, nested_tabs, nested_tab_count #}
+{% set nested_tabs = nested_tabs is defined ? nested_tabs : true %}
+{% set nested_tab_count = nested_tab_count|default(7) %}
+<div data-tstdt--workspace-tabs-target="panels" class="flex min-h-0 flex-1 flex-col overflow-auto">
+    <div
+        data-tstdt--workspace-tabs-target="mainPanel"
+        data-slot="workspace-panel"
+        data-tab-id="main"
+        data-tab-num="0"
+        data-filled="true"
+        data-state="active"
+        data-nested-active="nested-main"
+        role="tabpanel"
+        class="flex min-h-0 flex-1 flex-col"
+    >
+        <div
+            data-slot="workspace-nested-panel"
+            data-nested-tab-id="nested-main"
+            data-tab-num="0"
+            data-filled="true"
+            data-state="active"
+            class="flex min-h-0 flex-1 flex-col"
+        >
+            <div data-slot="workspace-tab-content" class="flex flex-1 flex-col gap-4 p-4"></div>
+        </div>
+
+        {% if nested_tabs %}
+            {% for j in 1..nested_tab_count %}
+                <div
+                    data-slot="workspace-nested-panel"
+                    data-nested-tab-id="nested-slot-{{ j }}"
+                    data-slot-index="{{ j }}"
+                    data-tab-num="{{ j }}"
+                    data-filled="false"
+                    data-state="inactive"
+                    class="flex min-h-0 flex-1 flex-col"
+                    hidden
+                >
+                    <div data-slot="workspace-tab-content" class="flex flex-1 flex-col gap-4 p-4"></div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% for i in 1..tab_count %}
+        <div
+            data-tstdt--workspace-tabs-target="slotPanel"
+            data-slot="workspace-panel"
+            data-tab-id="slot-{{ i }}"
+            data-slot-index="{{ i }}"
+            data-tab-num="{{ i }}"
+            data-filled="false"
+            data-state="inactive"
+            data-nested-active="nested-main"
+            role="tabpanel"
+            class="flex min-h-0 flex-1 flex-col"
+            hidden
+        >
+            <div
+                data-slot="workspace-nested-panel"
+                data-nested-tab-id="nested-main"
+                data-tab-num="0"
+                data-filled="false"
+                data-state="active"
+                class="flex min-h-0 flex-1 flex-col"
+            >
+                <div data-slot="workspace-tab-content" class="flex flex-1 flex-col gap-4 p-4"></div>
+            </div>
+
+            {% if nested_tabs %}
+                {% for j in 1..nested_tab_count %}
+                    <div
+                        data-slot="workspace-nested-panel"
+                        data-nested-tab-id="nested-slot-{{ j }}"
+                        data-slot-index="{{ j }}"
+                        data-tab-num="{{ j }}"
+                        data-filled="false"
+                        data-state="inactive"
+                        class="flex min-h-0 flex-1 flex-col"
+                        hidden
+                    >
+                        <div data-slot="workspace-tab-content" class="flex flex-1 flex-col gap-4 p-4"></div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

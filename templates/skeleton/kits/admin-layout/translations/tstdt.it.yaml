@@ -1,0 +1,125 @@
+# AdminLayout / workspace UI (Italian)
+'My account': Il mio account
+Account: Account
+Profile: Profilo
+Notifications: Notifiche
+Language: Lingua
+'Log out': Esci
+'Sign in': Accedi
+'Toggle sidebar': Mostra/nascondi barra laterale
+Workspace: Area di lavoro
+List: Elenco
+'Admin navigation': Navigazione admin
+'Open command palette': Apri palette comandi
+'Command palette (Ctrl/⌘ %key%)': Palette comandi (Ctrl/⌘ %key%)
+'Workspace tabs': Schede area di lavoro
+'Nested workspace tabs': Schede annidate area di lavoro
+'just now': adesso
+'1 min ago': 1 min fa
+'%count% min ago': '%count% min fa'
+'1h ago': 1 h fa
+'%count%h ago': '%count% h fa'
+'Loaded %ago%': Caricato %ago%
+'Tab %number%': Scheda %number%
+'Close tab %number%': Chiudi scheda %number%
+'Tab label display': Visualizzazione etichette schede
+'Show configured tab titles': Mostra titoli schede configurati
+'Show tab URLs': Mostra URL delle schede
+Title: Titolo
+URL: URL
+'Replace a tab': Sostituisci una scheda
+'All %count% tabs are open. Choose which tab to replace with the new item.': Tutte le %count% schede sono aperte. Scegli quale scheda sostituire.
+Cancel: Annulla
+Replace: Sostituisci
+'Loading…': Caricamento…
+'Type a command…': Digita un comando…
+'Command search': Cerca comando
+Commands: Comandi
+'No commands found.': Nessun comando trovato.
+'Are you sure?': Sei sicuro?
+Confirm: Conferma
+'(empty)': (vuoto)
+'Go to main tab': Vai alla scheda principale
+'Refresh main tab': Aggiorna scheda principale
+'Close all tabs': Chiudi tutte le schede
+'Open sidebar': Apri barra laterale
+'Close sidebar': Chiudi barra laterale
+'Go to tab {n}': Vai alla scheda {n}
+'Close tab {n}': Chiudi scheda {n}
+'Show tab titles': Mostra titoli schede
+Tabs: Schede
+'go main tab list': vai scheda principale elenco
+'refresh table main reload': aggiorna tabella principale ricarica
+'close all tabs': chiudi tutte schede
+'open sidebar navigation menu': apri barra laterale menu navigazione
+'close sidebar navigation menu': chiudi barra laterale menu navigazione
+'go tab': vai scheda
+'close tab': chiudi scheda
+'show tab titles labels name': mostra titoli schede etichette nome
+'show tab urls addresses links': mostra url schede indirizzi link
+'Close all tabs?': Chiudere tutte le schede?
+'All open tabs will be closed. The main list tab stays open.': Tutte le schede aperte verranno chiuse. La scheda elenco principale resta aperta.
+'Close all': Chiudi tutto
+'No rows found.': 'Nessuna riga trovata.'
+'Hide search': 'Nascondi ricerca'
+'Show search': 'Mostra ricerca'
+'Search': 'Cerca'
+'Hide advanced filters': 'Nascondi filtri avanzati'
+'Show advanced filters': 'Mostra filtri avanzati'
+'Advanced filters': 'Filtri avanzati'
+'Any': 'Qualsiasi'
+'1 selected': '1 selezionato'
+'%count% selected': '%count% selezionati'
+'Maximize': 'Ingrandisci'
+'Restore size': 'Ripristina dimensione'
+'Close': 'Chiudi'
+'Failed to load': 'Caricamento non riuscito'
+'Failed to load tab (%status%)': 'Caricamento scheda non riuscito (%status%)'
+'Save failed': 'Salvataggio non riuscito'
+'Save failed (%status%)': 'Salvataggio non riuscito (%status%)'
+'Delete this row?': 'Eliminare questa riga?'
+'Close tab': 'Chiudi scheda'
+'Open tab': 'Apri scheda'
+'Open tab %number%': 'Apri scheda %number%'
+'Select all': 'Seleziona tutto'
+'Select row': 'Seleziona riga'
+'Open': 'Apri'
+'Bulk actions': 'Azioni di massa'
+'Run action': 'Esegui azione'
+'Run bulk action': 'Esegui azione di massa'
+'Filters': 'Filtri'
+'Add': 'Aggiungi'
+'Match all filled rules': 'Corrispondi a tutte le regole compilate'
+'%field% operator': 'Operatore %field%'
+'%field% values': 'Valori %field%'
+'%field% value': 'Valore %field%'
+'%field% from': '%field% da'
+'%field% to': '%field% a'
+'Clear': 'Cancella'
+'Apply filters': 'Applica filtri'
+'Filter…': 'Filtra…'
+'Field': 'Campo'
+'Starts with': 'Inizia con'
+'Ends with': 'Finisce con'
+'Equal to': 'Uguale a'
+'Contains': 'Contiene'
+'Clear filter': 'Cancella filtro'
+'Columns': 'Colonne'
+'First page': 'Prima pagina'
+'Previous page': 'Pagina precedente'
+'Page': 'Pagina'
+'of': 'di'
+'Next page': 'Pagina successiva'
+'Last page': 'Ultima pagina'
+'Refresh': 'Aggiorna'
+'rows': 'righe'
+'Greater than': 'Maggiore di'
+'Greater or equal': 'Maggiore o uguale'
+'Less than': 'Minore di'
+'Less or equal': 'Minore o uguale'
+'Between': 'Tra'
+'On': 'Il'
+'Before': 'Prima'
+'After': 'Dopo'
+'Is any of': 'È uno di'
+'Is': 'È'

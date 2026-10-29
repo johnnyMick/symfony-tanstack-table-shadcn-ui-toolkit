@@ -1,0 +1,131 @@
+<?= "<?php\n" ?>
+
+declare(strict_types=1);
+
+namespace <?= $namespace; ?>;
+
+use Doctrine\DBAL\Connection;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+<?php if (!empty($with_admin_layout)): ?>
+use SymfonyTanstackTableShadcnUiToolkit\Layout\AdminBrand;
+use SymfonyTanstackTableShadcnUiToolkit\Layout\AdminLayout;
+use SymfonyTanstackTableShadcnUiToolkit\Layout\AdminUser;
+use SymfonyTanstackTableShadcnUiToolkit\Layout\NavCollapsible;
+use SymfonyTanstackTableShadcnUiToolkit\Layout\NavGroup;
+use SymfonyTanstackTableShadcnUiToolkit\Layout\NavLink;
+<?php endif; ?>
+use SymfonyTanstackTableShadcnUiToolkit\Table\Column;
+use SymfonyTanstackTableShadcnUiToolkit\Table\TableQuery;
+use SymfonyTanstackTableShadcnUiToolkit\Table\TanstackDataTable;
+
+#[Route('/settings')]
+final class <?= $class_name; ?> extends AbstractController
+{
+    /** @var list<string> */
+    private const DEMO_TABLES = [
+<?php foreach ($tables as $table): ?>
+        '<?= $table; ?>',
+<?php endforeach; ?>
+    ];
+
+    #[Route('/demo-data', name: 'app_settings_demo_data')]
+    public function demoData(): Response
+    {
+        $table = $this->demoDataTable();
+
+        return $this->render('settings/demo_data.html.twig', [
+<?php if (!empty($with_admin_layout)): ?>
+            'layout' => $this->adminLayout()->mainTabLabel('Demo data')->toArray(),
+<?php endif; ?>
+            'table' => $table->toArray(),
+        ]);
+    }
+
+    #[Route('/demo-data/format/json', name: 'app_settings_demo_data_json', methods: ['GET'])]
+    public function demoDataJson(Request $request, Connection $connection): JsonResponse
+    {
+        $table = $this->demoDataTable();
+        $query = TableQuery::fromRequest($request, $table->getPageSize());
+        [$rows, $total] = $query->paginateRows($this->demoDataRows($connection));
+
+        return $table->json($rows, $total, $query->page, $query->pageSize);
+    }
+
+    #[Route('/preferences', name: 'app_settings_preferences')]
+    public function preferences(): Response
+    {
+        return $this->render('settings/preferences.html.twig'<?php if (!empty($with_admin_layout)): ?>, [
+            'layout' => $this->adminLayout()->mainTabLabel('Preferences')->toArray(),
+        ]<?php endif; ?>);
+    }
+
+    private function demoDataTable(): TanstackDataTable
+    {
+        return TanstackDataTable::create('settings-demo-data')
+            ->title('Database tables')
+            ->description('Row counts for demo tables. Reset rebuilds sample data when a seeder is installed.')
+            ->url($this->generateUrl('app_settings_demo_data_json'))
+            ->pageSize(10)
+            ->emptyMessage('No tables found.')
+            ->columns([
+                Column::make('table')->label('Table')->class('font-mono text-sm'),
+                Column::make('rows')->label('Rows')->number()->class('font-medium'),
+            ]);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function demoDataRows(Connection $connection): array
+    {
+        $rows = [];
+
+        foreach (self::DEMO_TABLES as $table) {
+            try {
+                $count = (int) $connection->fetchOne(\sprintf('SELECT COUNT(*) FROM %s', $table));
+            } catch (\Throwable) {
+                $count = 0;
+            }
+
+            $rows[] = [
+                'id' => $table,
+                'table' => $table,
+                'rows' => $count,
+            ];
+        }
+
+        return $rows;
+    }
+<?php if (!empty($with_admin_layout)): ?>
+
+    private function adminLayout(): AdminLayout
+    {
+        return AdminLayout::create()
+            ->brand(
+                AdminBrand::create()
+                    ->title('App')
+                    ->subtitle('Admin console')
+                    ->href('#')
+            )
+            ->nav([
+                NavGroup::make('Settings')->items([
+                    NavCollapsible::make('Settings')
+                        ->icon('lucide:settings-2')
+                        ->children([
+                            NavLink::make('Demo data')
+                                ->href($this->generateUrl('app_settings_demo_data'))
+                                ->route('app_settings_demo_data'),
+                            NavLink::make('Preferences')
+                                ->href($this->generateUrl('app_settings_preferences'))
+                                ->route('app_settings_preferences'),
+                        ]),
+                ]),
+            ])
+            ->user(AdminUser::create()->name('Admin'));
+    }
+<?php endif; ?>
+}

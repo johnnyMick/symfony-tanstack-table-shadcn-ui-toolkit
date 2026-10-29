@@ -1,0 +1,125 @@
+# AdminLayout / workspace UI (German)
+'My account': Mein Konto
+Account: Konto
+Profile: Profil
+Notifications: Benachrichtigungen
+Language: Sprache
+'Log out': Abmelden
+'Sign in': Anmelden
+'Toggle sidebar': Seitenleiste umschalten
+Workspace: Arbeitsbereich
+List: Liste
+'Admin navigation': Admin-Navigation
+'Open command palette': Befehlspalette öffnen
+'Command palette (Ctrl/⌘ %key%)': Befehlspalette (Ctrl/⌘ %key%)
+'Workspace tabs': Arbeitsbereich-Tabs
+'Nested workspace tabs': Verschachtelte Arbeitsbereich-Tabs
+'just now': gerade eben
+'1 min ago': vor 1 Min.
+'%count% min ago': vor %count% Min.
+'1h ago': vor 1 Std.
+'%count%h ago': vor %count% Std.
+'Loaded %ago%': Geladen %ago%
+'Tab %number%': Tab %number%
+'Close tab %number%': Tab %number% schließen
+'Tab label display': Tab-Beschriftung
+'Show configured tab titles': Konfigurierte Tab-Titel anzeigen
+'Show tab URLs': Tab-URLs anzeigen
+Title: Titel
+URL: URL
+'Replace a tab': Tab ersetzen
+'All %count% tabs are open. Choose which tab to replace with the new item.': Alle %count% Tabs sind geöffnet. Wählen Sie den Tab zum Ersetzen.
+Cancel: Abbrechen
+Replace: Ersetzen
+'Loading…': Wird geladen…
+'Type a command…': Befehl eingeben…
+'Command search': Befehlssuche
+Commands: Befehle
+'No commands found.': Keine Befehle gefunden.
+'Are you sure?': Sind Sie sicher?
+Confirm: Bestätigen
+'(empty)': (leer)
+'Go to main tab': Zum Haupt-Tab
+'Refresh main tab': Haupt-Tab aktualisieren
+'Close all tabs': Alle Tabs schließen
+'Open sidebar': Seitenleiste öffnen
+'Close sidebar': Seitenleiste schließen
+'Go to tab {n}': Zu Tab {n}
+'Close tab {n}': Tab {n} schließen
+'Show tab titles': Tab-Titel anzeigen
+Tabs: Tabs
+'go main tab list': gehen haupt tab liste
+'refresh table main reload': aktualisieren tabelle haupt neu laden
+'close all tabs': alle tabs schließen
+'open sidebar navigation menu': seitenleiste öffnen navigation menü
+'close sidebar navigation menu': seitenleiste schließen navigation menü
+'go tab': zu tab
+'close tab': tab schließen
+'show tab titles labels name': tab titel beschriftungen name anzeigen
+'show tab urls addresses links': tab urls adressen links anzeigen
+'Close all tabs?': Alle Tabs schließen?
+'All open tabs will be closed. The main list tab stays open.': Alle geöffneten Tabs werden geschlossen. Der Hauptlisten-Tab bleibt geöffnet.
+'Close all': Alle schließen
+'No rows found.': 'Keine Zeilen gefunden.'
+'Hide search': 'Suche ausblenden'
+'Show search': 'Suche anzeigen'
+'Search': 'Suchen'
+'Hide advanced filters': 'Erweiterte Filter ausblenden'
+'Show advanced filters': 'Erweiterte Filter anzeigen'
+'Advanced filters': 'Erweiterte Filter'
+'Any': 'Beliebig'
+'1 selected': '1 ausgewählt'
+'%count% selected': '%count% ausgewählt'
+'Maximize': 'Maximieren'
+'Restore size': 'Größe wiederherstellen'
+'Close': 'Schließen'
+'Failed to load': 'Laden fehlgeschlagen'
+'Failed to load tab (%status%)': 'Tab laden fehlgeschlagen (%status%)'
+'Save failed': 'Speichern fehlgeschlagen'
+'Save failed (%status%)': 'Speichern fehlgeschlagen (%status%)'
+'Delete this row?': 'Diese Zeile löschen?'
+'Close tab': 'Tab schließen'
+'Open tab': 'Tab öffnen'
+'Open tab %number%': 'Tab %number% öffnen'
+'Select all': 'Alle auswählen'
+'Select row': 'Zeile auswählen'
+'Open': 'Öffnen'
+'Bulk actions': 'Massenaktionen'
+'Run action': 'Aktion ausführen'
+'Run bulk action': 'Massenaktion ausführen'
+'Filters': 'Filter'
+'Add': 'Hinzufügen'
+'Match all filled rules': 'Allen ausgefüllten Regeln entsprechen'
+'%field% operator': '%field%-Operator'
+'%field% values': '%field%-Werte'
+'%field% value': '%field%-Wert'
+'%field% from': '%field% von'
+'%field% to': '%field% bis'
+'Clear': 'Leeren'
+'Apply filters': 'Filter anwenden'
+'Filter…': 'Filtern…'
+'Field': 'Feld'
+'Starts with': 'Beginnt mit'
+'Ends with': 'Endet mit'
+'Equal to': 'Gleich'
+'Contains': 'Enthält'
+'Clear filter': 'Filter leeren'
+'Columns': 'Spalten'
+'First page': 'Erste Seite'
+'Previous page': 'Vorherige Seite'
+'Page': 'Seite'
+'of': 'von'
+'Next page': 'Nächste Seite'
+'Last page': 'Letzte Seite'
+'Refresh': 'Aktualisieren'
+'rows': 'Zeilen'
+'Greater than': 'Größer als'
+'Greater or equal': 'Größer oder gleich'
+'Less than': 'Kleiner als'
+'Less or equal': 'Kleiner oder gleich'
+'Between': 'Zwischen'
+'On': 'Am'
+'Before': 'Vor'
+'After': 'Nach'
+'Is any of': 'Ist eines von'
+'Is': 'Ist'

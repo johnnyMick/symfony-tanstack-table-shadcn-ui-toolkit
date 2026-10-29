@@ -1,0 +1,19 @@
+{# Dialog shown when all workspace slots are full. Expects: tab_count #}
+<dialog
+    data-tstdt--workspace-tabs-target="replaceDialog"
+    data-slot="workspace-replace-dialog"
+    class="fixed top-1/2 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-popover p-4 text-sm text-popover-foreground shadow-lg backdrop:bg-black/20 open:block"
+>
+    <div class="space-y-1 pb-3">
+        <h2 class="text-base font-semibold">{{ 'Replace a tab'|trans({}, 'tstdt') }}</h2>
+        <p data-tstdt--workspace-tabs-target="replaceDescription" class="text-muted-foreground">
+            {{ 'All %count% tabs are open. Choose which tab to replace with the new item.'|trans({'%count%': tab_count}, 'tstdt') }}
+        </p>
+    </div>
+    <div data-tstdt--workspace-tabs-target="replaceOptions" class="flex flex-col gap-2"></div>
+    <div class="flex justify-end pt-4">
+        <twig:tstdt:Button type="button" variant="outline" data-action="click->tstdt--workspace-tabs#cancelReplace">
+            {{ 'Cancel'|trans({}, 'tstdt') }}
+        </twig:tstdt:Button>
+    </div>
+</dialog>

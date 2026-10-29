@@ -1,0 +1,8 @@
+<tr
+    data-slot="table-row"
+    {{ attributes.without('class') }}
+    class="{{ ('border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The row cells, typically `Table:Cell` or `Table:Head` components. -#}
+    {%- block content %}{% endblock -%}
+</tr>

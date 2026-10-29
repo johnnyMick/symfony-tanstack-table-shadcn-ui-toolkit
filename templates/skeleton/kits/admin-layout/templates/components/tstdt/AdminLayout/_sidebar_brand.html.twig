@@ -1,0 +1,23 @@
+{# Brand header button for the admin sidebar. Expects: brand #}
+<twig:tstdt:Sidebar:Header>
+    <twig:tstdt:Sidebar:Menu>
+        <twig:tstdt:Sidebar:MenuItem>
+            <twig:tstdt:Sidebar:MenuButton
+                as="a"
+                href="{{ brand.href|default('#') }}"
+                size="lg"
+                tooltip="{{ brand.tooltip|default(brand.title|default('App')) }}"
+            >
+                <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <twig:ux:icon name="{{ brand.icon|default('lucide:table-2') }}" class="size-4" aria-hidden="true" />
+                </div>
+                <div class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                    <span class="truncate font-semibold">{{ brand.title|default('App') }}</span>
+                    {% if brand.subtitle|default(null) %}
+                        <span class="truncate text-xs">{{ brand.subtitle }}</span>
+                    {% endif %}
+                </div>
+            </twig:tstdt:Sidebar:MenuButton>
+        </twig:tstdt:Sidebar:MenuItem>
+    </twig:tstdt:Sidebar:Menu>
+</twig:tstdt:Sidebar:Header>

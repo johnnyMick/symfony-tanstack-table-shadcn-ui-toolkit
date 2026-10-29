@@ -1,0 +1,623 @@
+{%- props
+    ## array Table config from TanstackDataTable::toArray() (passed as data-config to Stimulus).
+    config = {}
+-%}
+{%- set tableId = config.id ?? ('tstdt_' ~ random()) -%}
+{%- set columns = config.columns ?? [] -%}
+{%- set pageSize = config.pageSize ?? 25 -%}
+{%- set headerActions = config.headerActions ?? [] -%}
+{%- set bulkActions = config.bulkActions ?? [] -%}
+{%- set columnVisibility = config.columnVisibility ?? true -%}
+{%- set filterPlaceholder = (config.filterPlaceholder ?? 'Filter…')|trans({}, 'tstdt') -%}
+{%- set advancedFiltersEnabled = config.advancedFilters ?? true -%}
+{%- set filterColumns = [] -%}
+{%- set advancedFilterColumns = [] -%}
+{%- for column in columns -%}
+    {%- set fieldId = column.accessorKey ?? column.id ?? null -%}
+    {%- set isButtons = (column.meta.format ?? null) == 'buttons' -%}
+    {%- set columnFilter = column.filter ?? null -%}
+    {%- if fieldId and not isButtons and columnFilter != false -%}
+        {%- set filterColumns = filterColumns|merge([{ id: fieldId, header: column.header ?? fieldId }]) -%}
+        {%- set filterType = columnFilter.type|default('string') -%}
+        {%- set filterOperators = columnFilter.operators|default([
+            { id: 'contains', label: 'Contains' },
+            { id: 'startsWith', label: 'Starts with' },
+            { id: 'endsWith', label: 'Ends with' },
+            { id: 'equals', label: 'Equal to' },
+        ]) -%}
+        {%- set advancedFilterColumns = advancedFilterColumns|merge([{
+            id: fieldId,
+            header: column.header ?? fieldId,
+            type: filterType,
+            multiple: columnFilter.multiple|default(false),
+            choices: columnFilter.choices|default({}),
+            operators: filterOperators,
+        }]) -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- set defaultFilterField = filterColumns[0].id ?? null -%}
+{%- set defaultFilterLabel = (filterColumns[0].header ?? 'Field')|trans({}, 'tstdt') -%}
+{%- set filterInputClass = 'h-8 min-w-0 flex-1 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30' -%}
+{%- set filterSelectClass = 'h-8 w-36 shrink-0 rounded-lg border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30' -%}
+<twig:tstdt:Card {{ ...attributes }}>
+    {% if config.title or config.description %}
+        <twig:tstdt:Card:Header>
+            {% if config.title %}
+                <twig:tstdt:Card:Title>{{ config.title }}</twig:tstdt:Card:Title>
+            {% endif %}
+            {% if config.description %}
+                <twig:tstdt:Card:Description>{{ config.description }}</twig:tstdt:Card:Description>
+            {% endif %}
+        </twig:tstdt:Card:Header>
+    {% endif %}
+    <twig:tstdt:Card:Content>
+{%- set table_i18n = {
+    'No rows found.': 'No rows found.'|trans({}, 'tstdt'),
+    'Hide search': 'Hide search'|trans({}, 'tstdt'),
+    'Show search': 'Show search'|trans({}, 'tstdt'),
+    'Search': 'Search'|trans({}, 'tstdt'),
+    'Hide advanced filters': 'Hide advanced filters'|trans({}, 'tstdt'),
+    'Show advanced filters': 'Show advanced filters'|trans({}, 'tstdt'),
+    'Advanced filters': 'Advanced filters'|trans({}, 'tstdt'),
+    'Any': 'Any'|trans({}, 'tstdt'),
+    '1 selected': '1 selected'|trans({}, 'tstdt'),
+    '%count% selected': '%count% selected'|trans({}, 'tstdt'),
+    'Maximize': 'Maximize'|trans({}, 'tstdt'),
+    'Restore size': 'Restore size'|trans({}, 'tstdt'),
+    'Close': 'Close'|trans({}, 'tstdt'),
+    'Loading…': 'Loading…'|trans({}, 'tstdt'),
+    'Failed to load': 'Failed to load'|trans({}, 'tstdt'),
+    'Save failed': 'Save failed'|trans({}, 'tstdt'),
+    'Delete this row?': 'Delete this row?'|trans({}, 'tstdt'),
+    'Close tab': 'Close tab'|trans({}, 'tstdt'),
+    'Open tab': 'Open tab'|trans({}, 'tstdt'),
+    'Open tab %number%': 'Open tab %number%'|trans({}, 'tstdt'),
+    'Select all': 'Select all'|trans({}, 'tstdt'),
+    'Select row': 'Select row'|trans({}, 'tstdt'),
+    'Open': 'Open'|trans({}, 'tstdt'),
+} -%}
+<div
+    data-controller="tstdt--tanstack-table"
+    data-config="{{ config|json_encode|e('html_attr') }}"
+    data-table-i18n="{{ table_i18n|json_encode|e('html_attr') }}"
+    class="space-y-4"
+>
+    {% set showAdvancedFilterToggle = advancedFiltersEnabled and advancedFilterColumns is not empty %}
+    {% if bulkActions is not empty or headerActions is not empty or showAdvancedFilterToggle %}
+        <div class="flex flex-wrap items-center gap-2" data-slot="tstdt_table-header-actions">
+            {% if bulkActions is not empty %}
+                <div class="flex flex-wrap items-center gap-2" data-slot="tstdt_table-bulk-actions">
+                    <twig:tstdt:Select
+                        id="{{ tableId }}-bulk-action"
+                        value=""
+                        data-tstdt--tanstack-table-target="bulkAction"
+                        data-action="tstdt--select:change->tstdt--tanstack-table#changeBulkAction"
+                    >
+                        <twig:tstdt:Select:Trigger size="sm" class="w-48" data-tstdt--tanstack-table-target="bulkActionTrigger" disabled="disabled">
+                            <twig:tstdt:Select:Value placeholder="{{ 'Bulk actions'|trans({}, 'tstdt') }}" />
+                        </twig:tstdt:Select:Trigger>
+                        <twig:tstdt:Select:Content position="popper" side="bottom">
+                            <twig:tstdt:Select:Group>
+                                {% for action in bulkActions %}
+                                    <twig:tstdt:Select:Item
+                                        value="{{ action.id }}"
+                                        data-bulk-action-event="{{ action.event|default('tanstack-table:bulk-' ~ action.id) }}"
+                                        data-bulk-action-url="{{ action.url|default('') }}"
+                                        data-bulk-action-csrf-token="{{ action.csrfToken|default('') }}"
+                                        data-bulk-action-csrf-field="{{ action.csrfField|default('_token') }}"
+                                    >{{ action.label }}</twig:tstdt:Select:Item>
+                                {% endfor %}
+                            </twig:tstdt:Select:Group>
+                        </twig:tstdt:Select:Content>
+                    </twig:tstdt:Select>
+                    <twig:tstdt:Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        data-tstdt--tanstack-table-target="bulkActionRun"
+                        data-action="tstdt--tanstack-table#runBulkAction"
+                        disabled="disabled"
+                        title="{{ 'Run action'|trans({}, 'tstdt') }}"
+                        aria-label="{{ 'Run bulk action'|trans({}, 'tstdt') }}"
+                    >
+                        <twig:ux:icon name="lucide:play" class="size-4" aria-hidden="true" />
+                    </twig:tstdt:Button>
+                    <span
+                        data-tstdt--tanstack-table-target="bulkSelectedCount"
+                        class="text-sm text-muted-foreground tabular-nums"
+                        hidden
+                    ></span>
+                </div>
+            {% endif %}
+
+            {% if headerActions is not empty or showAdvancedFilterToggle %}
+                <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
+                    {% if showAdvancedFilterToggle %}
+                        <twig:tstdt:Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            data-tstdt--tanstack-table-target="advancedFilterToggle"
+                            data-action="tstdt--tanstack-table#toggleAdvancedFilters"
+                            aria-expanded="false"
+                            aria-controls="{{ tableId }}-advanced-filter-panel"
+                            aria-label="{{ 'Show advanced filters'|trans({}, 'tstdt') }}"
+                            title="{{ 'Advanced filters'|trans({}, 'tstdt') }}"
+                            class="relative"
+                        >
+                            <twig:ux:icon name="lucide:sliders-horizontal" class="size-4" aria-hidden="true" />
+                            {{ 'Filters'|trans({}, 'tstdt') }}
+                            <span
+                                data-tstdt--tanstack-table-target="advancedFilterBadge"
+                                class="pointer-events-none absolute -top-1 -end-1 hidden size-2 rounded-full bg-primary"
+                                aria-hidden="true"
+                            ></span>
+                        </twig:tstdt:Button>
+                    {% endif %}
+                    {% for action in headerActions %}
+                        {% set actionId = action.id|default(loop.index0) %}
+                        {% set actionEvent = action.event|default('tanstack-table:' ~ actionId) %}
+                        {% set isAddButton = action.addButton|default(false) %}
+                        {% set actionAttrs = {
+                            type: action.type|default('button'),
+                            variant: action.variant|default('default'),
+                            size: action.size|default('sm'),
+                            'data-header-action': actionId,
+                            'data-header-action-event': actionEvent,
+                            'data-action': action.action|default(isAddButton ? 'click->tstdt--tanstack-table#addAction' : 'click->tstdt--tanstack-table#headerAction'),
+                            'aria-label': action.label,
+                            title: action.label,
+                        } %}
+                        {% if isAddButton %}
+                            {% set actionAttrs = actionAttrs|merge({
+                                'data-add-button': 'true',
+                                'data-url': action.url|default(''),
+                                'data-drawer-title': action.title|default(action.label|default('Add'|trans({}, 'tstdt'))),
+                                'data-drawer-side': action.side|default('right'),
+                            }) %}
+                        {% endif %}
+                        <twig:tstdt:Button {{ ...actionAttrs }}>
+                            {% if action.icon %}
+                                <twig:ux:icon name="{{ action.icon }}" class="size-4" aria-hidden="true" />
+                            {% endif %}
+                            {{ action.label }}
+                        </twig:tstdt:Button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if showAdvancedFilterToggle %}
+        <div
+            id="{{ tableId }}-advanced-filter-panel"
+            data-tstdt--tanstack-table-target="advancedFilterPanel"
+            data-state="closed"
+            hidden
+            aria-hidden="true"
+            class="rounded-lg border border-border bg-muted/30 p-3 text-foreground"
+        >
+            <div class="mb-3 flex items-center justify-between gap-2">
+                <p class="text-sm font-medium">{{ 'Advanced filters'|trans({}, 'tstdt') }}</p>
+                <p class="text-xs text-muted-foreground">{{ 'Match all filled rules'|trans({}, 'tstdt') }}</p>
+            </div>
+            <div class="grid gap-2" data-tstdt--tanstack-table-target="advancedFilterRows">
+                {% for field in advancedFilterColumns %}
+                    {% set filterType = field.type|default('string') %}
+                    {% set isDateRange = filterType == 'dateRange' %}
+                    {% set isChoice = filterType == 'choice' %}
+                    {% set isMultiple = field.multiple|default(false) %}
+                    {% set showOperator = field.operators|length > 1 and not isDateRange %}
+                    {% set defaultOperator = field.operators[0].id|default('contains') %}
+                    {% set valueInputType = filterType == 'number' ? 'number' : ((filterType == 'date' or isDateRange) ? 'date' : 'search') %}
+                    <div
+                        class="flex flex-wrap items-center gap-2"
+                        data-advanced-filter-row
+                        data-field-id="{{ field.id }}"
+                        data-filter-type="{{ filterType }}"
+                        data-filter-multiple="{{ isMultiple ? 'true' : 'false' }}"
+                    >
+                        <span class="w-28 shrink-0 truncate text-sm font-medium" title="{{ field.header }}">{{ field.header }}</span>
+
+                        {% if showOperator %}
+                            <select
+                                data-advanced-filter="operator"
+                                data-action="change->tstdt--tanstack-table#onAdvancedFilterOperatorChange"
+                                aria-label="{{ '%field% operator'|trans({'%field%': field.header}, 'tstdt') }}"
+                                class="{{ filterSelectClass }}"
+                            >
+                                {% for operator in field.operators %}
+                                    <option value="{{ operator.id }}" {% if loop.first %}selected{% endif %}>{{ operator.label|trans({}, 'tstdt') }}</option>
+                                {% endfor %}
+                            </select>
+                        {% else %}
+                            <input type="hidden" data-advanced-filter="operator" value="{{ defaultOperator }}" />
+                        {% endif %}
+
+                        {% if isChoice and isMultiple %}
+                            <div data-advanced-filter="values" class="relative">
+                                <twig:tstdt:Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    class="w-86 justify-between font-normal"
+                                    aria-label="{{ '%field% values'|trans({'%field%': field.header}, 'tstdt') }}"
+                                    aria-haspopup="listbox"
+                                    aria-expanded="false"
+                                    data-advanced-filter="values-trigger"
+                                    data-action="click->tstdt--tanstack-table#toggleAdvancedFilterChoicePopup"
+                                >
+                                    <span data-advanced-filter="values-label" class="min-w-0 truncate">{{ 'Any'|trans({}, 'tstdt') }}</span>
+                                    <twig:ux:icon name="lucide:chevrons-up-down" class="size-4 shrink-0 opacity-50" aria-hidden="true" />
+                                </twig:tstdt:Button>
+                                <div
+                                    data-advanced-filter="values-panel"
+                                    role="listbox"
+                                    aria-multiselectable="true"
+                                    hidden
+                                    class="absolute start-0 top-full z-50 mt-1 w-86 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md"
+                                >
+                                    <p class="px-2 py-1.5 text-xs font-medium text-muted-foreground">{{ field.header }}</p>
+                                    <div class="my-1 h-px bg-border"></div>
+                                    {% for choiceValue, choiceLabel in field.choices %}
+                                        <button
+                                            type="button"
+                                            role="option"
+                                            aria-selected="false"
+                                            data-advanced-filter-choice="{{ choiceValue }}"
+                                            data-choice-label="{{ choiceLabel }}"
+                                            data-action="click->tstdt--tanstack-table#toggleAdvancedFilterChoice"
+                                            class="relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md py-1.5 pe-8 ps-2 text-sm outline-hidden hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                        >
+                                            <span class="min-w-0 truncate">{{ choiceLabel }}</span>
+                                            <span
+                                                data-choice-indicator
+                                                hidden
+                                                class="pointer-events-none absolute end-2 inline-flex size-4 items-center justify-center"
+                                                aria-hidden="true"
+                                            >
+                                                <twig:ux:icon name="lucide:check" class="size-4" />
+                                            </span>
+                                        </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% elseif isChoice %}
+                            <select
+                                data-advanced-filter="value"
+                                aria-label="{{ '%field% value'|trans({'%field%': field.header}, 'tstdt') }}"
+                                class="{{ filterSelectClass }} w-56"
+                            >
+                                <option value="">{{ 'Any'|trans({}, 'tstdt') }}</option>
+                                {% for choiceValue, choiceLabel in field.choices %}
+                                    <option value="{{ choiceValue }}">{{ choiceLabel }}</option>
+                                {% endfor %}
+                            </select>
+                        {% else %}
+                            {% if isDateRange %}
+                                <input
+                                    type="date"
+                                    data-advanced-filter="value"
+                                    aria-label="{{ '%field% from'|trans({'%field%': field.header}, 'tstdt') }}"
+                                    data-action="keydown.enter->tstdt--tanstack-table#applyAdvancedFilters keydown.esc->tstdt--tanstack-table#closeAdvancedFilters"
+                                    class="{{ filterInputClass }} max-w-40"
+                                />
+                                <span class="text-xs text-muted-foreground">to</span>
+                                <input
+                                    type="date"
+                                    data-advanced-filter="valueTo"
+                                    aria-label="{{ '%field% to'|trans({'%field%': field.header}, 'tstdt') }}"
+                                    data-action="keydown.enter->tstdt--tanstack-table#applyAdvancedFilters keydown.esc->tstdt--tanstack-table#closeAdvancedFilters"
+                                    class="{{ filterInputClass }} max-w-40"
+                                />
+                            {% else %}
+                                <input
+                                    type="{{ valueInputType }}"
+                                    data-advanced-filter="value"
+                                    placeholder="{{ filterPlaceholder }}"
+                                    aria-label="{{ '%field% value'|trans({'%field%': field.header}, 'tstdt') }}"
+                                    data-action="keydown.enter->tstdt--tanstack-table#applyAdvancedFilters keydown.esc->tstdt--tanstack-table#closeAdvancedFilters"
+                                    class="{{ filterInputClass }} max-w-48"
+                                />
+                                <input
+                                    type="{{ valueInputType }}"
+                                    data-advanced-filter="valueTo"
+                                    aria-label="{{ '%field% to'|trans({'%field%': field.header}, 'tstdt') }}"
+                                    data-action="keydown.enter->tstdt--tanstack-table#applyAdvancedFilters keydown.esc->tstdt--tanstack-table#closeAdvancedFilters"
+                                    class="{{ filterInputClass }} max-w-48 {% if defaultOperator != 'between' %}hidden{% endif %}"
+                                    {% if defaultOperator != 'between' %}hidden{% endif %}
+                                />
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mt-3 flex flex-wrap items-center justify-end gap-2">
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    data-tstdt--tanstack-table-target="advancedFilterReset"
+                    data-action="tstdt--tanstack-table#resetAdvancedFilters"
+                >
+                    {{ 'Clear'|trans({}, 'tstdt') }}
+                </twig:tstdt:Button>
+                <twig:tstdt:Button
+                    type="button"
+                    variant="default"
+                    size="sm"
+                    data-tstdt--tanstack-table-target="advancedFilterApply"
+                    data-action="tstdt--tanstack-table#applyAdvancedFilters"
+                >
+                    {{ 'Apply filters'|trans({}, 'tstdt') }}
+                </twig:tstdt:Button>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="relative w-full overflow-x-auto border border-[color:var(--tstdt-border)]" data-slot="tstdt_table-container">
+        <div data-tstdt--tanstack-table-target="table"></div>
+        <div
+            data-tstdt--tanstack-table-target="loading"
+            data-slot="tstdt_table-loading"
+            hidden
+            aria-hidden="true"
+            class="absolute inset-0 z-10 flex items-center justify-center bg-background/70 backdrop-blur-[1px]"
+        >
+            <div class="flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm">
+                <twig:ux:icon name="lucide:refresh-cw" class="size-4 animate-spin" aria-hidden="true" />
+                <span>{{ 'Loading…'|trans({}, 'tstdt') }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-2 text-sm text-muted-foreground">
+        <div
+            id="{{ tableId }}-search-panel"
+            data-tstdt--tanstack-table-target="searchPanel"
+            data-state="closed"
+            hidden
+            aria-hidden="true"
+            class="flex flex-wrap items-center gap-2"
+        >
+            <div class="flex min-w-0 max-w-full flex-1 items-center gap-2 sm:max-w-[75%]">
+                <label for="{{ tableId }}-filter-input">{{ 'Search'|trans({}, 'tstdt') }}</label>
+                <twig:tstdt:Input
+                    id="{{ tableId }}-filter-input"
+                    type="search"
+                    placeholder="{{ filterPlaceholder }}"
+                    data-tstdt--tanstack-table-target="filter"
+                    data-action="input->tstdt--tanstack-table#onFilterInput keydown.enter->tstdt--tanstack-table#applyFilter keydown.esc->tstdt--tanstack-table#closeSearch"
+                    class="min-w-0 flex-1 max-w-124 flex-none"
+                />
+                {% if filterColumns is not empty %}
+                    <twig:tstdt:Select
+                        id="{{ tableId }}-filter-field"
+                        value="{{ defaultFilterField }}"
+                        data-action="tstdt--select:change->tstdt--tanstack-table#changeFilterField"
+                        class="m-w-12"
+                    >
+                        <twig:tstdt:Select:Trigger size="sm" class="w-36 shrink-0">
+                            <twig:tstdt:Select:Value placeholder="{{ defaultFilterLabel }}" />
+                        </twig:tstdt:Select:Trigger>
+                        <twig:tstdt:Select:Content position="popper" side="top">
+                            <twig:tstdt:Select:Group>
+                                {% for field in filterColumns %}
+                                    <twig:tstdt:Select:Item value="{{ field.id }}">{{ field.header }}</twig:tstdt:Select:Item>
+                                {% endfor %}
+                            </twig:tstdt:Select:Group>
+                        </twig:tstdt:Select:Content>
+                    </twig:tstdt:Select>
+
+                    <twig:tstdt:Select
+                        id="{{ tableId }}-filter-operator"
+                        value="startsWith"
+                        data-action="tstdt--select:change->tstdt--tanstack-table#changeFilterOperator"
+                        class="m-w-12"
+                    >
+                        <twig:tstdt:Select:Trigger size="sm" class="w-36 shrink-0">
+                            <twig:tstdt:Select:Value placeholder="{{ 'Starts with'|trans({}, 'tstdt') }}" />
+                        </twig:tstdt:Select:Trigger>
+                        <twig:tstdt:Select:Content position="popper" side="top">
+                            <twig:tstdt:Select:Group>
+                                <twig:tstdt:Select:Item value="startsWith">{{ 'Starts with'|trans({}, 'tstdt') }}</twig:tstdt:Select:Item>
+                                <twig:tstdt:Select:Item value="endsWith">{{ 'Ends with'|trans({}, 'tstdt') }}</twig:tstdt:Select:Item>
+                                <twig:tstdt:Select:Item value="equals">{{ 'Equal to'|trans({}, 'tstdt') }}</twig:tstdt:Select:Item>
+                                <twig:tstdt:Select:Item value="contains">{{ 'Contains'|trans({}, 'tstdt') }}</twig:tstdt:Select:Item>
+                            </twig:tstdt:Select:Group>
+                        </twig:tstdt:Select:Content>
+                    </twig:tstdt:Select>
+                {% endif %}
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="searchSubmit"
+                    data-action="tstdt--tanstack-table#applyFilter"
+                    disabled
+                    title="{{ 'Search'|trans({}, 'tstdt') }}"
+                    aria-label="{{ 'Search'|trans({}, 'tstdt') }}"
+                >
+                    <span data-search-submit-idle class="inline-flex">
+                        <twig:ux:icon name="lucide:play" class="size-4" aria-hidden="true" />
+                    </span>
+                    <span data-search-submit-loading class="inline-flex" hidden>
+                        <twig:ux:icon name="lucide:loader-circle" class="size-4 animate-spin" aria-hidden="true" />
+                    </span>
+                </twig:tstdt:Button>
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="searchReset"
+                    data-action="tstdt--tanstack-table#resetFilter"
+                    disabled
+                    title="{{ 'Clear filter'|trans({}, 'tstdt') }}"
+                    aria-label="{{ 'Clear filter'|trans({}, 'tstdt') }}"
+                >
+                    <twig:ux:icon name="lucide:x" class="size-4" aria-hidden="true" />
+                </twig:tstdt:Button>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <twig:tstdt:Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                data-tstdt--tanstack-table-target="searchToggle"
+                data-action="tstdt--tanstack-table#toggleSearch"
+                aria-expanded="false"
+                aria-controls="{{ tableId }}-search-panel"
+                aria-label="{{ 'Show search'|trans({}, 'tstdt') }}"
+                title="{{ 'Search'|trans({}, 'tstdt') }}"
+            >
+                <twig:ux:icon name="lucide:search" class="size-4" aria-hidden="true" />
+            </twig:tstdt:Button>
+
+            {% if columnVisibility %}
+                <twig:tstdt:DropdownMenu id="{{ tableId }}-columns" side="top" align="start">
+                    <twig:tstdt:DropdownMenu:Trigger>
+                        <twig:tstdt:Button
+                            {{ ...dropdown_menu_trigger_attrs }}
+                            type="button"
+                            variant="outline"
+                            size="icon-sm"
+                            aria-label="{{ 'Columns'|trans({}, 'tstdt') }}"
+                            title="{{ 'Columns'|trans({}, 'tstdt') }}"
+                        >
+                            <twig:ux:icon name="lucide:settings-2" class="size-4" aria-hidden="true" />
+                        </twig:tstdt:Button>
+                    </twig:tstdt:DropdownMenu:Trigger>
+                    <twig:tstdt:DropdownMenu:Content class="w-52">
+                        <twig:tstdt:DropdownMenu:Label>{{ 'Columns'|trans({}, 'tstdt') }}</twig:tstdt:DropdownMenu:Label>
+                        <twig:tstdt:DropdownMenu:Separator />
+                        <twig:tstdt:DropdownMenu:Group>
+                            {% for column in columns %}
+                                {% set fieldId = column.accessorKey ?? column.id ?? null %}
+                                {% set hideable = column.meta.hideable ?? true %}
+                                {% set headerLabel = column.header ?? fieldId %}
+                                {% set defaultVisible = column.defaultVisible ?? true %}
+                                {% if fieldId and hideable %}
+                                    <twig:tstdt:DropdownMenu:CheckboxItem
+                                        :checked="defaultVisible"
+                                        :closeOnSelect="false"
+                                        data-column-id="{{ fieldId }}"
+                                        data-tstdt--tanstack-table-target="columnToggle"
+                                        data-action="click->tstdt--tanstack-table#toggleColumnVisibility"
+                                    >
+                                        {{ headerLabel != '' ? headerLabel : fieldId }}
+                                    </twig:tstdt:DropdownMenu:CheckboxItem>
+                                {% endif %}
+                            {% endfor %}
+                        </twig:tstdt:DropdownMenu:Group>
+                    </twig:tstdt:DropdownMenu:Content>
+                </twig:tstdt:DropdownMenu>
+            {% endif %}
+
+            <div class="ml-auto flex flex-wrap items-center gap-2">
+                <twig:tstdt:Select
+                    id="{{ tableId }}-page-size"
+                    value="{{ pageSize }}"
+                    data-action="tstdt--select:change->tstdt--tanstack-table#changePageSize"
+                >
+                    <twig:tstdt:Select:Trigger size="sm" class="w-16">
+                        <twig:tstdt:Select:Value placeholder="{{ pageSize }}" />
+                    </twig:tstdt:Select:Trigger>
+                    <twig:tstdt:Select:Content position="popper" side="top">
+                        <twig:tstdt:Select:Group>
+                            {% for size in [10, 20, 25, 50, 100] %}
+                                <twig:tstdt:Select:Item value="{{ size }}">{{ size }}</twig:tstdt:Select:Item>
+                            {% endfor %}
+                        </twig:tstdt:Select:Group>
+                    </twig:tstdt:Select:Content>
+                </twig:tstdt:Select>
+
+                <twig:tstdt:Separator orientation="vertical" class="mx-1 h-6" />
+
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="first"
+                    data-action="tstdt--tanstack-table#firstPage"
+                    aria-label="{{ 'First page'|trans({}, 'tstdt') }}"
+                    title="{{ 'First page'|trans({}, 'tstdt') }}"
+                >
+                    <twig:ux:icon name="lucide:chevrons-left" class="size-4" aria-hidden="true" />
+                </twig:tstdt:Button>
+
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="previous"
+                    data-action="tstdt--tanstack-table#previousPage"
+                    aria-label="{{ 'Previous page'|trans({}, 'tstdt') }}"
+                    title="{{ 'Previous page'|trans({}, 'tstdt') }}"
+                >
+                    <twig:ux:icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
+                </twig:tstdt:Button>
+
+                <twig:tstdt:Input
+                    type="number"
+                    name="tstdt_page-{{ tableId }}"
+                    min="1"
+                    inputmode="numeric"
+                    data-tstdt--tanstack-table-target="pageInput"
+                    data-action="change->tstdt--tanstack-table#goToPage keydown.enter->tstdt--tanstack-table#goToPage"
+                    aria-label="{{ 'Page'|trans({}, 'tstdt') }}"
+                    class="h-7 w-12 px-1 text-center tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                />
+
+                <span class="whitespace-nowrap">
+                    {{ 'of'|trans({}, 'tstdt') }} <span data-tstdt--tanstack-table-target="pageCount">1</span>
+                </span>
+
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="next"
+                    data-action="tstdt--tanstack-table#nextPage"
+                    aria-label="{{ 'Next page'|trans({}, 'tstdt') }}"
+                    title="{{ 'Next page'|trans({}, 'tstdt') }}"
+                >
+                    <twig:ux:icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
+                </twig:tstdt:Button>
+
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="last"
+                    data-action="tstdt--tanstack-table#lastPage"
+                    aria-label="{{ 'Last page'|trans({}, 'tstdt') }}"
+                    title="{{ 'Last page'|trans({}, 'tstdt') }}"
+                >
+                    <twig:ux:icon name="lucide:chevrons-right" class="size-4" aria-hidden="true" />
+                </twig:tstdt:Button>
+
+                <twig:tstdt:Separator orientation="vertical" class="mx-1 h-6" />
+
+                <twig:tstdt:Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    data-tstdt--tanstack-table-target="refreshButton"
+                    data-action="tstdt--tanstack-table#refresh"
+                    aria-label="{{ 'Refresh'|trans({}, 'tstdt') }}"
+                    title="{{ 'Refresh'|trans({}, 'tstdt') }}"
+                >
+                    <twig:ux:icon name="lucide:refresh-cw" data-refresh-icon class="size-4" aria-hidden="true" />
+                </twig:tstdt:Button>
+
+                <span class="whitespace-nowrap tabular-nums">
+                    <span data-tstdt--tanstack-table-target="totalCount">0</span> {{ 'rows'|trans({}, 'tstdt') }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+    </twig:tstdt:Card:Content>
+</twig:tstdt:Card>
