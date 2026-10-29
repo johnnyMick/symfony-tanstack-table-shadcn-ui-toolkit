@@ -1,0 +1,46 @@
+{# Command palette dialog (Cmd/Ctrl+K). Targets live on Sidebar:Inset command-palette controller.
+   Expects: command_palette (enabled, keyboardShortcut, commands) #}
+{% set commands = command_palette.commands|default([]) %}
+<dialog
+    data-tstdt--command-palette-target="dialog"
+    data-slot="workspace-command-palette"
+    class="fixed top-[min(20%,8rem)] left-1/2 z-[80] m-0 w-[min(100%-2rem,36rem)] max-h-[min(70vh,32rem)] -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-popover p-0 text-sm text-popover-foreground shadow-xl outline-none backdrop:bg-black/30 open:flex open:flex-col"
+>
+    <div class="flex items-center gap-2 border-b border-border px-3">
+        <twig:ux:icon name="lucide:search" class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <input
+            type="search"
+            data-tstdt--command-palette-target="input"
+            data-action="input->tstdt--command-palette#onInput keydown->tstdt--command-palette#onInputKeydown"
+            placeholder="{{ 'Type a command…'|trans({}, 'tstdt') }}"
+            autocomplete="off"
+            spellcheck="false"
+            class="h-11 w-full min-w-0 border-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            aria-label="{{ 'Command search'|trans({}, 'tstdt') }}"
+        />
+        <kbd class="pointer-events-none hidden shrink-0 rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground sm:inline-block">esc</kbd>
+    </div>
+    <div
+        data-tstdt--command-palette-target="list"
+        role="listbox"
+        aria-label="{{ 'Commands'|trans({}, 'tstdt') }}"
+        class="min-h-0 flex-1 overflow-y-auto p-1"
+    ></div>
+    <div
+        data-tstdt--command-palette-target="empty"
+        hidden
+        class="px-3 py-6 text-center text-sm text-muted-foreground"
+    >
+        {{ 'No commands found.'|trans({}, 'tstdt') }}
+    </div>
+    {# Pre-render command icons for Stimulus to clone into list rows. #}
+    <div hidden data-slot="command-palette-icon-registry" aria-hidden="true">
+        {% for command in commands %}
+            {% if command.icon|default(null) %}
+                <span data-command-palette-icon="{{ command.icon }}">
+                    <twig:ux:icon name="{{ command.icon }}" class="size-4" aria-hidden="true" />
+                </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+</dialog>

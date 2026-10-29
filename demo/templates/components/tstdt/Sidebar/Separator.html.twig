@@ -1,0 +1,5 @@
+<hr
+    data-slot="sidebar-separator"
+    {{ attributes.without('class') }}
+    class="{{ ('mx-2 w-auto bg-sidebar-border ' ~ attributes.render('class'))|tailwind_merge }}"
+>

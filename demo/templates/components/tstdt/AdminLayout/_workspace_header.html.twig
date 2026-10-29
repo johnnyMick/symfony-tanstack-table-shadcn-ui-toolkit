@@ -1,0 +1,53 @@
+{# Inset top bar: sidebar trigger + loaded-ago / refresh + command palette + page actions.
+   Expects: page_actions, command_palette_enabled, command_palette_shortcut #}
+{% set command_palette_enabled = command_palette_enabled|default(true) %}
+{% set command_palette_shortcut = command_palette_shortcut|default('k') %}
+<header class="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+    <twig:tstdt:Sidebar:Trigger class="-ms-1">
+        <twig:ux:icon name="lucide:panel-left" aria-hidden="true" />
+        <span class="sr-only">{{ 'Toggle sidebar'|trans({}, 'tstdt') }}</span>
+    </twig:tstdt:Sidebar:Trigger>
+    <twig:tstdt:Separator orientation="vertical" class="mx-1 h-4" />
+    <div class="flex min-w-0 flex-1 items-center justify-end gap-2">
+        <div
+            data-tstdt--workspace-tabs-target="headerTabStatus"
+            data-slot="workspace-header-tab-status"
+            class="flex items-center gap-1.5"
+            hidden
+        >
+            <span
+                data-tstdt--workspace-tabs-target="headerLoadedBadge"
+                data-slot="workspace-header-loaded"
+                class="inline-flex max-w-[14rem] truncate rounded-md px-2 py-0.5 text-xs font-medium tabular-nums"
+                hidden
+            ></span>
+            <button
+                type="button"
+                data-tstdt--workspace-tabs-target="headerRefresh"
+                data-slot="workspace-tab-refresh"
+                data-action="click->tstdt--workspace-tabs#refreshTab"
+                class="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                title="{{ 'Refresh'|trans({}, 'tstdt') }}"
+                aria-label="{{ 'Refresh'|trans({}, 'tstdt') }}"
+                hidden
+            >
+                <twig:ux:icon name="lucide:refresh-cw" class="size-3.5" aria-hidden="true" />
+            </button>
+        </div>
+        {% if page_actions|trim %}
+            {{ page_actions|raw }}
+        {% endif %}
+        {% if command_palette_enabled %}
+            <twig:tstdt:Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                data-action="click->tstdt--command-palette#open"
+                aria-label="{{ 'Open command palette'|trans({}, 'tstdt') }}"
+                title="{{ 'Command palette (Ctrl/⌘ %key%)'|trans({'%key%': command_palette_shortcut|upper}, 'tstdt') }}"
+            >
+                <twig:ux:icon name="lucide:command" class="size-4" aria-hidden="true" />
+            </twig:tstdt:Button>
+        {% endif %}
+    </div>
+</header>

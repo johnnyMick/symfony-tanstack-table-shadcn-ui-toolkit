@@ -1,0 +1,18 @@
+{# Nav groups for the admin sidebar. Expects: nav, current_route #}
+<twig:tstdt:Sidebar:Content>
+    {% for group in nav %}
+        <twig:tstdt:Sidebar:Group>
+            <twig:tstdt:Sidebar:GroupLabel>{{ group.label }}</twig:tstdt:Sidebar:GroupLabel>
+            <twig:tstdt:Sidebar:GroupContent>
+                <twig:tstdt:Sidebar:Menu>
+                    {% for item in group.items|default([]) %}
+                        {% include 'components/tstdt/AdminLayout/_nav_item.html.twig' with {
+                            item: item,
+                            current_route: current_route,
+                        } only %}
+                    {% endfor %}
+                </twig:tstdt:Sidebar:Menu>
+            </twig:tstdt:Sidebar:GroupContent>
+        </twig:tstdt:Sidebar:Group>
+    {% endfor %}
+</twig:tstdt:Sidebar:Content>

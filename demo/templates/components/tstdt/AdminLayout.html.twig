@@ -1,0 +1,133 @@
+{#-
+  Admin shell driven by AdminLayout::toArray() from the controller.
+
+  Partials live under components/tstdt/AdminLayout/:
+    _sidebar_brand, _sidebar_nav, _nav_item, _sidebar_account,
+    _workspace_header, _workspace_tabs, _workspace_panels,
+    _workspace_replace_dialog, _workspace_command_palette, _workspace_command_confirm
+
+  UI copy uses the {@code tstdt} translation domain (English message ids).
+-#}
+{%- props
+    ## array Layout config from AdminLayout::toArray().
+    config = {}
+-%}
+{% set page_content %}{% block content %}{% endblock %}{% endset %}
+{% set page_actions %}{% block actions %}{% endblock %}{% endset %}
+
+{% set brand = config.brand|default({}) %}
+{% set nav = config.nav|default([]) %}
+{% set user = config.user|default({}) %}
+{% set main_tab_label = config.mainTabLabel|default('List') %}
+{% set main_tab_url = config.mainTabUrl|default(app.request.requestUri) %}
+{% set workspace_label = config.workspaceLabel|default('Workspace') %}
+{% set sidebar_label = config.sidebarLabel|default('Admin navigation') %}
+{% set sidebar_id = config.id|default('admin-sidebar') %}
+{% set tab_count = min(20, max(1, config.tabCount|default(5)|abs)) %}
+{% set nested_tabs = config.nestedTabs is defined ? config.nestedTabs : true %}
+{% set nested_tab_count = min(20, max(1, config.nestedTabCount|default(7)|abs)) %}
+{% set command_palette = config.commandPalette|default({ enabled: true, keyboardShortcut: 'k', commands: [] }) %}
+{% set command_palette_enabled = command_palette.enabled|default(true) %}
+{% set inset_controllers = command_palette_enabled ? 'tstdt--workspace-tabs tstdt--command-palette' : 'tstdt--workspace-tabs' %}
+{% set current_route = app.request.attributes.get('_route') %}
+
+{# Translate command palette strings before Stimulus JSON config. #}
+{% set translated_commands = [] %}
+{% for command in command_palette.commands|default([]) %}
+    {% set confirm = command.confirm|default(null) %}
+    {% if confirm %}
+        {% set confirm = {
+            title: confirm.title|default('Are you sure?')|trans({}, 'tstdt'),
+            description: confirm.description|default('')|trans({}, 'tstdt'),
+            confirmLabel: confirm.confirmLabel|default('Confirm')|trans({}, 'tstdt'),
+        } %}
+    {% endif %}
+    {% set translated_commands = translated_commands|merge([{
+        id: command.id,
+        label: command.label|trans({}, 'tstdt'),
+        group: command.group|default('Workspace')|trans({}, 'tstdt'),
+        keywords: command.keywords|default('')|trans({}, 'tstdt'),
+        icon: command.icon|default(null),
+        action: command.action,
+        event: command.event|default(null),
+        slotIndex: command.slotIndex|default(null),
+        expandSlots: command.expandSlots|default(false),
+        confirm: confirm,
+    }]) %}
+{% endfor %}
+{% set command_palette = command_palette|merge({ commands: translated_commands }) %}
+{# json_encode only — Sidebar:Inset escapes attributes once; |e('html_attr') would double-encode. #}
+{% set command_palette_config_json = command_palette_enabled ? command_palette|json_encode : '{}' %}
+{% set workspace_i18n = {
+    'Tab %number%': 'Tab %number%'|trans({}, 'tstdt'),
+    'Replace': 'Replace'|trans({}, 'tstdt'),
+    'Loading…': 'Loading…'|trans({}, 'tstdt'),
+    'Refresh': 'Refresh'|trans({}, 'tstdt'),
+    'Loaded %ago%': 'Loaded %ago%'|trans({}, 'tstdt'),
+    '(empty)': '(empty)'|trans({}, 'tstdt'),
+    'Failed to load': 'Failed to load'|trans({}, 'tstdt'),
+    'Failed to load tab (%status%)': 'Failed to load tab (%status%)'|trans({}, 'tstdt'),
+    'Save failed': 'Save failed'|trans({}, 'tstdt'),
+    'Save failed (%status%)': 'Save failed (%status%)'|trans({}, 'tstdt'),
+    'Go to tab {n}': 'Go to tab {n}'|trans({}, 'tstdt'),
+    'Close tab {n}': 'Close tab {n}'|trans({}, 'tstdt'),
+    'just now': 'just now'|trans({}, 'tstdt'),
+    '1 min ago': '1 min ago'|trans({}, 'tstdt'),
+    '%count% min ago': '%count% min ago'|trans({}, 'tstdt'),
+    '1h ago': '1h ago'|trans({}, 'tstdt'),
+    '%count%h ago': '%count%h ago'|trans({}, 'tstdt'),
+}|json_encode %}
+
+<twig:tstdt:Sidebar:Provider id="{{ sidebar_id }}" class="min-h-svh w-full">
+    <twig:tstdt:Sidebar collapsible="icon" variant="inset" label="{{ sidebar_label|trans({}, 'tstdt') }}">
+        {% include 'components/tstdt/AdminLayout/_sidebar_brand.html.twig' with { brand: brand } only %}
+        {% include 'components/tstdt/AdminLayout/_sidebar_nav.html.twig' with {
+            nav: nav,
+            current_route: current_route,
+        } only %}
+        {% include 'components/tstdt/AdminLayout/_sidebar_account.html.twig' with {
+            user: user,
+            sidebar_id: sidebar_id,
+        } only %}
+        <twig:tstdt:Sidebar:Rail />
+    </twig:tstdt:Sidebar>
+
+    <twig:tstdt:Sidebar:Inset
+        data-controller="{{ inset_controllers }}"
+        data-tstdt--workspace-tabs-main-tab-id-value="main"
+        data-tstdt--workspace-tabs-slot-count-value="{{ tab_count }}"
+        data-tstdt--workspace-tabs-nested-tabs-value="{{ nested_tabs ? 'true' : 'false' }}"
+        data-tstdt--workspace-tabs-nested-slot-count-value="{{ nested_tab_count }}"
+        data-workspace-i18n="{{ workspace_i18n }}"
+        data-command-palette-config="{{ command_palette_config_json }}"
+        class="flex min-h-0 flex-1 flex-col"
+    >
+        {% include 'components/tstdt/AdminLayout/_workspace_header.html.twig' with {
+            workspace_label: workspace_label,
+            page_actions: page_actions,
+            command_palette_enabled: command_palette_enabled,
+            command_palette_shortcut: command_palette.keyboardShortcut|default('k'),
+        } only %}
+        {% include 'components/tstdt/AdminLayout/_workspace_tabs.html.twig' with {
+            main_tab_label: main_tab_label,
+            main_tab_url: main_tab_url,
+            tab_count: tab_count,
+            nested_tabs: nested_tabs,
+            nested_tab_count: nested_tab_count,
+        } only %}
+        {% include 'components/tstdt/AdminLayout/_workspace_panels.html.twig' with {
+            tab_count: tab_count,
+            nested_tabs: nested_tabs,
+            nested_tab_count: nested_tab_count,
+        } only %}
+        {% include 'components/tstdt/AdminLayout/_workspace_replace_dialog.html.twig' with {
+            tab_count: tab_count,
+        } only %}
+        {% if command_palette_enabled %}
+            {% include 'components/tstdt/AdminLayout/_workspace_command_palette.html.twig' with {
+                command_palette: command_palette,
+            } only %}
+            {% include 'components/tstdt/AdminLayout/_workspace_command_confirm.html.twig' %}
+        {% endif %}
+    </twig:tstdt:Sidebar:Inset>
+</twig:tstdt:Sidebar:Provider>

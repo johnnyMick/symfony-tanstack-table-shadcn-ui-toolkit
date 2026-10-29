@@ -1,0 +1,8 @@
+<ul
+    data-slot="sidebar-menu-sub"
+    {{ attributes.without('class') }}
+    class="{{ ('mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-s border-sidebar-border px-2.5 py-0.5 group-data-[collapsible=icon]:hidden ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- One or more `Sidebar:MenuSubItem`. -#}
+    {%- block content %}{% endblock -%}
+</ul>

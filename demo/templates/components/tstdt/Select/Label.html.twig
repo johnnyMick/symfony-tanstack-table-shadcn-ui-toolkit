@@ -1,0 +1,10 @@
+{%- set _selectGroup_labelId = inject('selectGroup.labelId', null) -%}
+<div
+    {% if _selectGroup_labelId is not null %}id="{{ _selectGroup_labelId }}"{% endif %}
+    data-slot="select-label"
+    {{ attributes.without('class') }}
+    class="{{ ('px-1.5 py-1 text-xs text-muted-foreground ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The label text. -#}
+    {%- block content %}{% endblock -%}
+</div>

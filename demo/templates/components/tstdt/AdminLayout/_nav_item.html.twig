@@ -1,0 +1,59 @@
+{#
+  One sidebar nav entry (link or collapsible).
+  Expects: item, current_route
+#}
+{% if item.type|default('link') == 'collapsible' %}
+    {% set group_open = current_route in (item.routes|default([])) %}
+    <twig:tstdt:Sidebar:MenuItem>
+        <twig:tstdt:Collapsible :open="group_open" class="group/collapsible">
+            <twig:tstdt:Collapsible:Trigger>
+                <twig:tstdt:Sidebar:MenuButton
+                    {{ ...collapsible_trigger_attrs }}
+                    tooltip="{{ item.tooltip|default(item.label) }}"
+                    :active="group_open"
+                >
+                    {% if item.icon|default(null) %}
+                        <twig:ux:icon name="{{ item.icon }}" aria-hidden="true" />
+                    {% endif %}
+                    <span>{{ item.label }}</span>
+                    <twig:ux:icon
+                        name="lucide:chevron-right"
+                        class="ms-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-90"
+                        aria-hidden="true"
+                    />
+                </twig:tstdt:Sidebar:MenuButton>
+            </twig:tstdt:Collapsible:Trigger>
+            <twig:tstdt:Collapsible:Content>
+                <twig:tstdt:Sidebar:MenuSub>
+                    {% for child in item.children|default([]) %}
+                        <twig:tstdt:Sidebar:MenuSubItem>
+                            <twig:tstdt:Sidebar:MenuSubButton
+                                href="{{ child.href|default('#') }}"
+                                :active="current_route in (child.routes|default([]))"
+                            >
+                                {% if child.icon|default(null) %}
+                                    <twig:ux:icon name="{{ child.icon }}" aria-hidden="true" />
+                                {% endif %}
+                                <span>{{ child.label }}</span>
+                            </twig:tstdt:Sidebar:MenuSubButton>
+                        </twig:tstdt:Sidebar:MenuSubItem>
+                    {% endfor %}
+                </twig:tstdt:Sidebar:MenuSub>
+            </twig:tstdt:Collapsible:Content>
+        </twig:tstdt:Collapsible>
+    </twig:tstdt:Sidebar:MenuItem>
+{% else %}
+    <twig:tstdt:Sidebar:MenuItem>
+        <twig:tstdt:Sidebar:MenuButton
+            as="a"
+            href="{{ item.href|default('#') }}"
+            tooltip="{{ item.tooltip|default(item.label) }}"
+            :active="current_route in (item.routes|default([]))"
+        >
+            {% if item.icon|default(null) %}
+                <twig:ux:icon name="{{ item.icon }}" aria-hidden="true" />
+            {% endif %}
+            <span>{{ item.label }}</span>
+        </twig:tstdt:Sidebar:MenuButton>
+    </twig:tstdt:Sidebar:MenuItem>
+{% endif %}

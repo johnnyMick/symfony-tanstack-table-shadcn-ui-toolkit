@@ -1,0 +1,167 @@
+{# Workspace tab strip (level 1) + optional nested strip (level 2) + Title/URL label mode.
+   Expects: main_tab_label, main_tab_url, tab_count, nested_tabs, nested_tab_count #}
+{% set nested_tabs = nested_tabs is defined ? nested_tabs : true %}
+{% set nested_tab_count = nested_tab_count|default(7) %}
+{% set main_tab_url = main_tab_url|default('') %}
+<div class="flex h-10 shrink-0 items-stretch border-b bg-muted/40">
+    <div
+        data-tstdt--workspace-tabs-target="tablist"
+        data-slot="workspace-tablist"
+        role="tablist"
+        aria-label="{{ 'Workspace tabs'|trans({}, 'tstdt') }}"
+        class="min-w-0 flex-1"
+        style="--workspace-slot-count: {{ tab_count }};"
+    >
+        <button
+            type="button"
+            data-tstdt--workspace-tabs-target="mainTab"
+            data-slot="workspace-tab"
+            data-tab-level="1"
+            data-tab-id="main"
+            data-tab-num="0"
+            data-filled="true"
+            data-open="true"
+            data-open-url="{{ main_tab_url }}"
+            data-open-tab-id="{{ main_tab_url }}"
+            data-state="active"
+            role="tab"
+            aria-selected="true"
+            tabindex="0"
+            data-action="click->tstdt--workspace-tabs#selectTab"
+        >
+            <twig:ux:icon name="lucide:table-2" class="size-3.5 shrink-0" aria-hidden="true" />
+            <span data-slot="workspace-tab-label">{{ main_tab_label|trans({}, 'tstdt') }}</span>
+            {% include 'components/tstdt/AdminLayout/_workspace_tab_loaded.html.twig' %}
+        </button>
+
+        {% for i in 1..tab_count %}
+            <button
+                type="button"
+                data-tstdt--workspace-tabs-target="slotTab"
+                data-slot="workspace-tab"
+                data-tab-level="1"
+                data-tab-id="slot-{{ i }}"
+                data-slot-index="{{ i }}"
+                data-filled="false"
+                data-state="inactive"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1"
+                data-action="click->tstdt--workspace-tabs#selectTab"
+            >
+                <span data-slot="workspace-tab-label">{{ 'Tab %number%'|trans({'%number%': i}, 'tstdt') }}</span>
+                {% include 'components/tstdt/AdminLayout/_workspace_tab_loaded.html.twig' %}
+                <span
+                    data-slot="workspace-tab-close"
+                    data-tab-id="slot-{{ i }}"
+                    data-action="click->tstdt--workspace-tabs#closeTab"
+                    class="pointer-events-auto absolute top-0 end-0 z-10 inline-flex size-6 items-center justify-center rounded-sm opacity-60 hover:bg-muted hover:opacity-100"
+                    aria-label="{{ 'Close tab %number%'|trans({'%number%': i}, 'tstdt') }}"
+                    hidden
+                >
+                    <twig:ux:icon name="lucide:x" class="size-3.5" aria-hidden="true" />
+                </span>
+            </button>
+        {% endfor %}
+    </div>
+
+    <div
+        data-slot="workspace-tab-label-mode"
+        role="group"
+        aria-label="{{ 'Tab label display'|trans({}, 'tstdt') }}"
+        class="flex shrink-0 items-center gap-0.5 border-s border-border px-1.5"
+    >
+        <button
+            type="button"
+            data-label-mode="title"
+            data-state="on"
+            aria-pressed="true"
+            title="{{ 'Show configured tab titles'|trans({}, 'tstdt') }}"
+            data-action="click->tstdt--workspace-tabs#setLabelMode"
+        >
+            {{ 'Title'|trans({}, 'tstdt') }}
+        </button>
+        <button
+            type="button"
+            data-label-mode="url"
+            data-state="off"
+            aria-pressed="false"
+            title="{{ 'Show tab URLs'|trans({}, 'tstdt') }}"
+            data-action="click->tstdt--workspace-tabs#setLabelMode"
+        >
+            {{ 'URL'|trans({}, 'tstdt') }}
+        </button>
+    </div>
+</div>
+
+{% if nested_tabs %}
+{# Level 2: active level-1 tab becomes main. Separators are horizontal dots. #}
+{# Hidden on the level-1 main tab; shown when a content slot is active. #}
+<div
+    data-tstdt--workspace-tabs-target="nestedTablistWrap"
+    data-slot="workspace-nested-tablist-wrap"
+    class="flex h-9 shrink-0 items-stretch border-b bg-muted/25"
+    hidden
+    aria-hidden="true"
+>
+    <div
+        data-tstdt--workspace-tabs-target="nestedTablist"
+        data-slot="workspace-nested-tablist"
+        role="tablist"
+        aria-label="{{ 'Nested workspace tabs'|trans({}, 'tstdt') }}"
+        class="min-w-0 flex-1"
+    >
+        <button
+            type="button"
+            data-tstdt--workspace-tabs-target="nestedMainTab"
+            data-slot="workspace-nested-tab"
+            data-tab-level="2"
+            data-nested-tab-id="nested-main"
+            data-filled="true"
+            data-state="active"
+            role="tab"
+            aria-selected="true"
+            tabindex="0"
+            data-action="click->tstdt--workspace-tabs#selectNestedTab"
+            aria-label="{{ 'Tab %number%'|trans({'%number%': 1}, 'tstdt') }}"
+        >
+            <twig:ux:icon name="lucide:git-compare-arrows" class="size-5 shrink-0" aria-hidden="true" />
+        </button>
+
+        {% for i in 1..nested_tab_count %}
+            {% if i > 1 %}
+                <span data-slot="workspace-nested-sep" aria-hidden="true">
+                    <twig:ux:icon name="lucide:arrow-right-left" class="size-3" />
+                </span>
+            {% endif %}
+            <button
+                type="button"
+                data-tstdt--workspace-tabs-target="nestedSlotTab"
+                data-slot="workspace-nested-tab"
+                data-tab-level="2"
+                data-nested-tab-id="nested-slot-{{ i }}"
+                data-slot-index="{{ i }}"
+                data-filled="false"
+                data-state="inactive"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1"
+                data-action="click->tstdt--workspace-tabs#selectNestedTab"
+            >
+                <span data-slot="workspace-nested-tab-label">{{ 'Tab %number%'|trans({'%number%': '1.' ~ i}, 'tstdt') }}</span>
+                {% include 'components/tstdt/AdminLayout/_workspace_tab_loaded.html.twig' %}
+                <span
+                    data-slot="workspace-nested-tab-close"
+                    data-nested-tab-id="nested-slot-{{ i }}"
+                    data-action="click->tstdt--workspace-tabs#closeNestedTab"
+                    class="pointer-events-auto absolute top-0 end-0 z-10 inline-flex size-6 items-center justify-center rounded-sm opacity-60 hover:bg-muted hover:opacity-100"
+                    aria-label="{{ 'Close tab %number%'|trans({'%number%': i}, 'tstdt') }}"
+                    hidden
+                >
+                    <twig:ux:icon name="lucide:x" class="size-3.5" aria-hidden="true" />
+                </span>
+            </button>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

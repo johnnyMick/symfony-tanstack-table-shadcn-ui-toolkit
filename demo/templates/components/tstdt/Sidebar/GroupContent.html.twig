@@ -1,0 +1,8 @@
+<div
+    data-slot="sidebar-group-content"
+    {{ attributes.without('class') }}
+    class="{{ ('w-full text-sm ' ~ attributes.render('class'))|tailwind_merge }}"
+>
+    {##- The group body, typically a `Sidebar:Menu`. -#}
+    {%- block content %}{% endblock -%}
+</div>
