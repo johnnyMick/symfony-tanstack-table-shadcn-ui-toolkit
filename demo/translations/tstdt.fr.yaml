@@ -1,0 +1,125 @@
+# AdminLayout / workspace UI (French)
+'My account': Mon compte
+Account: Compte
+Profile: Profil
+Notifications: Notifications
+Language: Langue
+'Log out': Déconnexion
+'Sign in': Connexion
+'Toggle sidebar': Afficher/masquer la barre latérale
+Workspace: Espace de travail
+List: Liste
+'Admin navigation': Navigation admin
+'Open command palette': Ouvrir la palette de commandes
+'Command palette (Ctrl/⌘ %key%)': Palette de commandes (Ctrl/⌘ %key%)
+'Workspace tabs': Onglets de l’espace de travail
+'Nested workspace tabs': Onglets imbriqués de l’espace de travail
+'just now': à l’instant
+'1 min ago': il y a 1 min
+'%count% min ago': il y a %count% min
+'1h ago': il y a 1 h
+'%count%h ago': il y a %count% h
+'Loaded %ago%': Chargé %ago%
+'Tab %number%': Onglet %number%
+'Close tab %number%': Fermer l’onglet %number%
+'Tab label display': Affichage des libellés d’onglet
+'Show configured tab titles': Afficher les titres d’onglet configurés
+'Show tab URLs': Afficher les URL des onglets
+Title: Titre
+URL: URL
+'Replace a tab': Remplacer un onglet
+'All %count% tabs are open. Choose which tab to replace with the new item.': Les %count% onglets sont ouverts. Choisissez l’onglet à remplacer.
+Cancel: Annuler
+Replace: Remplacer
+'Loading…': Chargement…
+'Type a command…': Saisir une commande…
+'Command search': Recherche de commande
+Commands: Commandes
+'No commands found.': Aucune commande trouvée.
+'Are you sure?': Êtes-vous sûr ?
+Confirm: Confirmer
+'(empty)': (vide)
+'Go to main tab': Aller à l’onglet principal
+'Refresh main tab': Actualiser l’onglet principal
+'Close all tabs': Fermer tous les onglets
+'Open sidebar': Ouvrir la barre latérale
+'Close sidebar': Fermer la barre latérale
+'Go to tab {n}': Aller à l’onglet {n}
+'Close tab {n}': Fermer l’onglet {n}
+'Show tab titles': Afficher les titres d’onglet
+Tabs: Onglets
+'go main tab list': aller onglet principal liste
+'refresh table main reload': actualiser tableau principal recharger
+'close all tabs': fermer tous onglets
+'open sidebar navigation menu': ouvrir barre latérale menu navigation
+'close sidebar navigation menu': fermer barre latérale menu navigation
+'go tab': aller onglet
+'close tab': fermer onglet
+'show tab titles labels name': afficher titres onglets libellés nom
+'show tab urls addresses links': afficher urls onglets adresses liens
+'Close all tabs?': Fermer tous les onglets ?
+'All open tabs will be closed. The main list tab stays open.': Tous les onglets ouverts seront fermés. L’onglet liste principal reste ouvert.
+'Close all': Tout fermer
+'No rows found.': 'Aucune ligne trouvée.'
+'Hide search': 'Masquer la recherche'
+'Show search': 'Afficher la recherche'
+'Search': 'Rechercher'
+'Hide advanced filters': 'Masquer les filtres avancés'
+'Show advanced filters': 'Afficher les filtres avancés'
+'Advanced filters': 'Filtres avancés'
+'Any': 'Tous'
+'1 selected': '1 sélectionné'
+'%count% selected': '%count% sélectionnés'
+'Maximize': 'Agrandir'
+'Restore size': 'Restaurer la taille'
+'Close': 'Fermer'
+'Failed to load': 'Échec du chargement'
+'Failed to load tab (%status%)': 'Échec du chargement de l’onglet (%status%)'
+'Save failed': 'Échec de l’enregistrement'
+'Save failed (%status%)': 'Échec de l’enregistrement (%status%)'
+'Delete this row?': 'Supprimer cette ligne ?'
+'Close tab': 'Fermer l’onglet'
+'Open tab': 'Ouvrir l’onglet'
+'Open tab %number%': 'Ouvrir l’onglet %number%'
+'Select all': 'Tout sélectionner'
+'Select row': 'Sélectionner la ligne'
+'Open': 'Ouvrir'
+'Bulk actions': 'Actions groupées'
+'Run action': 'Exécuter l’action'
+'Run bulk action': 'Exécuter l’action groupée'
+'Filters': 'Filtres'
+'Add': 'Ajouter'
+'Match all filled rules': 'Correspondre à toutes les règles renseignées'
+'%field% operator': 'Opérateur %field%'
+'%field% values': 'Valeurs %field%'
+'%field% value': 'Valeur %field%'
+'%field% from': '%field% de'
+'%field% to': '%field% à'
+'Clear': 'Effacer'
+'Apply filters': 'Appliquer les filtres'
+'Filter…': 'Filtrer…'
+'Field': 'Champ'
+'Starts with': 'Commence par'
+'Ends with': 'Se termine par'
+'Equal to': 'Égal à'
+'Contains': 'Contient'
+'Clear filter': 'Effacer le filtre'
+'Columns': 'Colonnes'
+'First page': 'Première page'
+'Previous page': 'Page précédente'
+'Page': 'Page'
+'of': 'sur'
+'Next page': 'Page suivante'
+'Last page': 'Dernière page'
+'Refresh': 'Actualiser'
+'rows': 'lignes'
+'Greater than': 'Supérieur à'
+'Greater or equal': 'Supérieur ou égal'
+'Less than': 'Inférieur à'
+'Less or equal': 'Inférieur ou égal'
+'Between': 'Entre'
+'On': 'Le'
+'Before': 'Avant'
+'After': 'Après'
+'Is any of': 'Est l’un de'
+'Is': 'Est'

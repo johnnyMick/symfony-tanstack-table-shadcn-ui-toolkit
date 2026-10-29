@@ -1,0 +1,87 @@
+DataTables Demo: Demo DataTables
+Admin console: Console admin
+TanStack Demo: Demo TanStack
+Overview: Panoramica
+Dashboard: Dashboard
+Platform: Piattaforma
+Catalog: Catalogo
+Products: Prodotti
+Categories: Categorie
+Sales: Vendite
+Sales (unlocked): Vendite (sbloccate)
+Sales (sign in required): Vendite (accesso richiesto)
+Orders: Ordini
+Customers: Clienti
+Order items: Righe ordine
+Settings: Impostazioni
+Preferences: Preferenze
+Invalid CSRF token.: Token CSRF non valido.
+Category not found.: Categoria non trovata.
+Product “%name%” saved.: Prodotto “%name%” salvato.
+Product “%name%” deleted.: Prodotto “%name%” eliminato.
+Product “%name%” created.: Prodotto “%name%” creato.
+Choose a category.: Scegli una categoria.
+Category “%name%” saved.: Categoria “%name%” salvata.
+Category “%name%” deleted.: Categoria “%name%” eliminata.
+Category “%name%” created.: Categoria “%name%” creata.
+Catalog products: Prodotti del catalogo
+TanStack Table with shadcn styling — server-side pagination via AJAX.: TanStack Table con stile shadcn — paginazione lato
+  server via AJAX.
+No products yet. Reset demo data from Settings.: Nessun prodotto. Reimposta i dati demo da Impostazioni.
+Download CSV: Scarica CSV
+Add: Aggiungi
+Add product: Aggiungi prodotto
+Open: Apri
+SKU: SKU
+Name: Nome
+Category: Categoria
+Price: Prezzo
+Stock: Scorte
+Status: Stato
+Active: Attivo
+Inactive: Inattivo
+Created: Creato
+Delete: Elimina
+Delete product “{name}”?: Eliminare il prodotto “{name}”?
+Open a category in a nested tab under this product.: Apri una categoria in una scheda nidificata sotto questo prodotto.
+Catalog categories: Categorie del catalogo
+Product groups used by the demo catalog.: Gruppi di prodotti usati dal catalogo demo.
+No categories yet. Reset demo data from Settings.: Nessuna categoria. Reimposta i dati demo da Impostazioni.
+Add category: Aggiungi categoria
+Slug: Slug
+Description: Descrizione
+Delete category “{name}”?: Eliminare la categoria “{name}”?
+Sales orders: Ordini di vendita
+Shop orders with server-side pagination via AJAX.: Ordini negozio con paginazione lato server via AJAX.
+No orders yet. Reset demo data from Settings.: Nessun ordine. Reimposta i dati demo da Impostazioni.
+Reference: Riferimento
+Customer: Cliente
+Email: Email
+Pending: In attesa
+Paid: Pagato
+Shipped: Spedito
+Cancelled: Annullato
+Refunded: Rimborsato
+Total: Totale
+Ordered at: Ordinato il
+Shop customers seeded for the demo.: Clienti negozio generati per la demo.
+No customers yet. Reset demo data from Settings.: Nessun cliente. Reimposta i dati demo da Impostazioni.
+Filter customers…: Filtra clienti…
+Location: Località
+Order line items: Righe ordine
+Products sold on each order with quantity and unit price.: Prodotti venduti per ogni ordine con quantità e prezzo unitario.
+No order items yet. Reset demo data from Settings.: Nessuna riga ordine. Reimposta i dati demo da Impostazioni.
+Filter order items…: Filtra righe…
+Order: Ordine
+Product: Prodotto
+Qty: Qtà
+Unit price: Prezzo unitario
+Line total: Totale riga
+Demo data: Dati demo
+Database tables: Tabelle database
+Row counts for the seeded demo schema. Reset rebuilds everything from Faker.: Conteggi righe dello schema demo. Il reset ricostruisce
+  tutto con Faker.
+No tables found.: Nessuna tabella trovata.
+Table: Tabella
+Rows: Righe
+'Demo data reset: %summary%.': 'Dati demo reimpostati: %summary%.'

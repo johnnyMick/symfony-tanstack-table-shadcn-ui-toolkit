@@ -1,0 +1,81 @@
+{% set categories = categories|default([]) %}
+
+<div class="mx-auto w-full max-w-2xl space-y-6">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div
+                class="rounded-lg border px-4 py-3 text-sm {{ label == 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : (label == 'error' ? 'border-destructive/30 bg-destructive/10 text-destructive' : 'border-border bg-muted/50 text-foreground') }}"
+                role="status"
+            >{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="space-y-1">
+        <h2 class="text-lg font-semibold tracking-tight">New product</h2>
+        <p class="text-sm text-muted-foreground">Create a catalog product.</p>
+    </div>
+
+    <form
+        method="post"
+        action="{{ path('app_catalog_products_new') }}"
+        class="space-y-4"
+        data-turbo="false"
+    >
+        <input type="hidden" name="_token" value="{{ csrf_token('product_new') }}">
+
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div class="space-y-1.5 sm:col-span-2">
+                <label for="product-name" class="text-sm font-medium">Name</label>
+                <twig:tstdt:Input id="product-name" name="name" value="{{ values.name|default('') }}" required autofocus />
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="product-sku" class="text-sm font-medium">SKU</label>
+                <twig:tstdt:Input id="product-sku" name="sku" value="{{ values.sku|default('') }}" class="font-mono text-xs" required />
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="product-category" class="text-sm font-medium">Category</label>
+                <select
+                    id="product-category"
+                    name="category"
+                    class="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    required
+                >
+                    <option value="">Select…</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {{ values.category|default(null) == category.id ? 'selected' : '' }}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="product-price" class="text-sm font-medium">Price</label>
+                <twig:tstdt:Input id="product-price" name="price" type="number" step="0.01" min="0" value="{{ values.price|default('0') }}" required />
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="product-stock" class="text-sm font-medium">Stock</label>
+                <twig:tstdt:Input id="product-stock" name="stock" type="number" step="1" min="0" value="{{ values.stock|default('0') }}" required />
+            </div>
+
+            <div class="flex items-center gap-2 sm:col-span-2">
+                <input
+                    id="product-active"
+                    type="checkbox"
+                    name="active"
+                    value="1"
+                    class="size-4 rounded border border-input"
+                    {{ values.active|default(true) ? 'checked' : '' }}
+                >
+                <label for="product-active" class="text-sm font-medium">Active</label>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+            <twig:tstdt:Button type="submit">Create product</twig:tstdt:Button>
+        </div>
+    </form>
+</div>

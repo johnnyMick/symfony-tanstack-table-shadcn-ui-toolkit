@@ -1,0 +1,58 @@
+{% set products_table = products_table|default(null) %}
+
+<div class="flex w-full min-w-0 flex-col gap-6">
+    {% for message in app.flashes('success') %}
+        <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900" role="status">{{ message }}</div>
+    {% endfor %}
+
+    <div class="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
+        <div class="min-w-0 space-y-6">
+            <div class="space-y-1">
+                <h2 class="text-lg font-semibold tracking-tight">{{ category.name }}</h2>
+                <p class="text-sm text-muted-foreground">Edit category <span class="font-mono text-xs">{{ category.slug }}</span></p>
+            </div>
+
+            <form
+                method="post"
+                action="{{ path('app_catalog_categories_edit', {id: category.id}) }}"
+                class="space-y-4"
+                data-turbo="false"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('category_edit_' ~ category.id) }}">
+                <input type="hidden" name="_workspace_tab" value="1">
+
+                <div class="grid gap-4">
+                    <div class="space-y-1.5">
+                        <label for="category-name" class="text-sm font-medium">Name</label>
+                        <twig:tstdt:Input id="category-name" name="name" value="{{ category.name }}" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="category-slug" class="text-sm font-medium">Slug</label>
+                        <twig:tstdt:Input id="category-slug" name="slug" value="{{ category.slug }}" class="font-mono text-xs" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="category-description" class="text-sm font-medium">Description</label>
+                        <textarea
+                            id="category-description"
+                            name="description"
+                            rows="4"
+                            class="w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                        >{{ category.description }}</textarea>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <twig:tstdt:Button type="submit">Save category</twig:tstdt:Button>
+                </div>
+            </form>
+        </div>
+
+        <div class="min-w-0">
+            {% if products_table %}
+                <twig:tstdt:TanstackDataTable :config="products_table" />
+            {% endif %}
+        </div>
+    </div>
+</div>

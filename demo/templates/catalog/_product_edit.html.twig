@@ -1,0 +1,87 @@
+{% set categories = categories|default([]) %}
+{% set categories_table = categories_table|default(null) %}
+
+<div class="flex w-full min-w-0 flex-col gap-6">
+    {% for message in app.flashes('success') %}
+        <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900" role="status">{{ message }}</div>
+    {% endfor %}
+
+    <div class="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
+        <div class="min-w-0 space-y-6">
+            <div class="space-y-1">
+                <h2 class="text-lg font-semibold tracking-tight">{{ product.name }}</h2>
+                <p class="text-sm text-muted-foreground">Edit product <span class="font-mono text-xs">{{ product.sku }}</span></p>
+            </div>
+
+            <form
+                method="post"
+                action="{{ path('app_catalog_products_edit', {id: product.id}) }}"
+                class="space-y-4"
+                data-turbo="false"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('product_edit_' ~ product.id) }}">
+                <input type="hidden" name="_workspace_tab" value="1">
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="space-y-1.5 sm:col-span-2">
+                        <label for="product-name" class="text-sm font-medium">Name</label>
+                        <twig:tstdt:Input id="product-name" name="name" value="{{ product.name }}" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="product-sku" class="text-sm font-medium">SKU</label>
+                        <twig:tstdt:Input id="product-sku" name="sku" value="{{ product.sku }}" class="font-mono text-xs" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="product-category" class="text-sm font-medium">Category</label>
+                        <select
+                            id="product-category"
+                            name="category"
+                            class="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                            required
+                        >
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {{ category.id == product.category.id ? 'selected' : '' }}>
+                                    {{ category.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="product-price" class="text-sm font-medium">Price</label>
+                        <twig:tstdt:Input id="product-price" name="price" type="number" step="0.01" min="0" value="{{ product.price }}" required />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="product-stock" class="text-sm font-medium">Stock</label>
+                        <twig:tstdt:Input id="product-stock" name="stock" type="number" step="1" min="0" value="{{ product.stock }}" required />
+                    </div>
+
+                    <div class="flex items-center gap-2 sm:col-span-2">
+                        <input
+                            id="product-active"
+                            type="checkbox"
+                            name="active"
+                            value="1"
+                            class="size-4 rounded border border-input"
+                            {{ product.active ? 'checked' : '' }}
+                        >
+                        <label for="product-active" class="text-sm font-medium">Active</label>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <twig:tstdt:Button type="submit">Save product</twig:tstdt:Button>
+                </div>
+            </form>
+        </div>
+
+        <div class="min-w-0">
+            {% if categories_table %}
+                <twig:tstdt:TanstackDataTable :config="categories_table" />
+            {% endif %}
+        </div>
+    </div>
+</div>

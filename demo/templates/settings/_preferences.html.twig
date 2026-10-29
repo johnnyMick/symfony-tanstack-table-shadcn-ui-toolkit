@@ -1,0 +1,25 @@
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set flash_class = label == 'success'
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+            : (label == 'error'
+                ? 'border-destructive/30 bg-destructive/10 text-destructive'
+                : 'border-border bg-muted/50 text-foreground')
+        %}
+        <div class="rounded-lg border px-4 py-3 text-sm {{ flash_class }}" role="status">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<twig:tstdt:Card>
+    <twig:tstdt:Card:Header>
+        <twig:tstdt:Card:Title>Demo preferences</twig:tstdt:Card:Title>
+        <twig:tstdt:Card:Description>Placeholder settings page for the admin shell.</twig:tstdt:Card:Description>
+    </twig:tstdt:Card:Header>
+    <twig:tstdt:Card:Content class="space-y-3 text-sm text-muted-foreground">
+        <p>Theme colors live in <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">assets/styles/app.css</code>.</p>
+        <p>See <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">demo/README.md</code> for how to swap the shadcn palette.</p>
+        <p>Sidebar collapse shortcut: <kbd class="rounded border bg-muted px-1.5 py-0.5 font-mono text-xs">Ctrl</kbd>/<kbd class="rounded border bg-muted px-1.5 py-0.5 font-mono text-xs">⌘</kbd>+<kbd class="rounded border bg-muted px-1.5 py-0.5 font-mono text-xs">B</kbd>.</p>
+    </twig:tstdt:Card:Content>
+</twig:tstdt:Card>

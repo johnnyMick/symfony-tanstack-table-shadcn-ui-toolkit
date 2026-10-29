@@ -1,0 +1,50 @@
+<div class="mx-auto w-full max-w-2xl space-y-6">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div
+                class="rounded-lg border px-4 py-3 text-sm {{ label == 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : (label == 'error' ? 'border-destructive/30 bg-destructive/10 text-destructive' : 'border-border bg-muted/50 text-foreground') }}"
+                role="status"
+            >{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="space-y-1">
+        <h2 class="text-lg font-semibold tracking-tight">New category</h2>
+        <p class="text-sm text-muted-foreground">Create a product category.</p>
+    </div>
+
+    <form
+        method="post"
+        action="{{ path('app_catalog_categories_new') }}"
+        class="space-y-4"
+        data-turbo="false"
+    >
+        <input type="hidden" name="_token" value="{{ csrf_token('category_new') }}">
+
+        <div class="grid gap-4">
+            <div class="space-y-1.5">
+                <label for="category-name" class="text-sm font-medium">Name</label>
+                <twig:tstdt:Input id="category-name" name="name" value="{{ values.name|default('') }}" required autofocus />
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="category-slug" class="text-sm font-medium">Slug</label>
+                <twig:tstdt:Input id="category-slug" name="slug" value="{{ values.slug|default('') }}" class="font-mono text-xs" required />
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="category-description" class="text-sm font-medium">Description</label>
+                <textarea
+                    id="category-description"
+                    name="description"
+                    rows="4"
+                    class="w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >{{ values.description|default('') }}</textarea>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+            <twig:tstdt:Button type="submit">Create category</twig:tstdt:Button>
+        </div>
+    </form>
+</div>

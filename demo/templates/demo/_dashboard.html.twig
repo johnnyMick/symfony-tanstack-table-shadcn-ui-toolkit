@@ -1,0 +1,51 @@
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set flash_class = label == 'success'
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+            : (label == 'error'
+                ? 'border-destructive/30 bg-destructive/10 text-destructive'
+                : 'border-border bg-muted/50 text-foreground')
+        %}
+        <div class="rounded-lg border px-4 py-3 text-sm {{ flash_class }}" role="status">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    {% set cards = [
+        {label: 'Products', count: counts.product|default(0), route: 'app_catalog_products', icon: 'lucide:package'},
+        {label: 'Categories', count: counts.category|default(0), route: 'app_catalog_categories', icon: 'lucide:tags'},
+        {label: 'Orders', count: counts.shop_order|default(0), route: 'app_sales_orders', icon: 'lucide:shopping-cart'},
+        {label: 'Customers', count: counts.customer|default(0), route: 'app_sales_customers', icon: 'lucide:users'},
+        {label: 'Order items', count: counts.order_item|default(0), route: 'app_sales_order_items', icon: 'lucide:list-ordered'},
+    ] %}
+    {% for card in cards %}
+        <a href="{{ path(card.route) }}" class="block transition-opacity hover:opacity-90">
+            <twig:tstdt:Card>
+                <twig:tstdt:Card:Header>
+                    <twig:tstdt:Card:Title class="flex items-center gap-2">
+                        <twig:ux:icon name="{{ card.icon }}" class="size-4 text-muted-foreground" aria-hidden="true" />
+                        {{ card.label }}
+                    </twig:tstdt:Card:Title>
+                    <twig:tstdt:Card:Description>Open the {{ card.label|lower }} table</twig:tstdt:Card:Description>
+                </twig:tstdt:Card:Header>
+                <twig:tstdt:Card:Content>
+                    <p class="text-3xl font-semibold tracking-tight">{{ card.count|number_format }}</p>
+                </twig:tstdt:Card:Content>
+            </twig:tstdt:Card>
+        </a>
+    {% endfor %}
+</div>
+
+<twig:tstdt:Card>
+    <twig:tstdt:Card:Header>
+        <twig:tstdt:Card:Title>Getting started</twig:tstdt:Card:Title>
+        <twig:tstdt:Card:Description>
+            Use the sidebar to browse catalog and sales tables. Sales requires sign-in (admin / admin). Reset seed data under Settings → Demo data.
+        </twig:tstdt:Card:Description>
+    </twig:tstdt:Card:Header>
+    <twig:tstdt:Card:Content class="text-sm text-muted-foreground">
+        <a href="{{ path('app_settings_demo_data') }}" class="text-primary underline-offset-4 hover:underline">Manage demo data</a>
+    </twig:tstdt:Card:Content>
+</twig:tstdt:Card>

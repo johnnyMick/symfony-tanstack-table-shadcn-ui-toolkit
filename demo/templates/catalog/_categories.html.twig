@@ -1,0 +1,14 @@
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set flash_class = label == 'success'
+            ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+            : (label == 'error'
+                ? 'border-destructive/30 bg-destructive/10 text-destructive'
+                : 'border-border bg-muted/50 text-foreground')
+        %}
+        <div class="rounded-lg border px-4 py-3 text-sm {{ flash_class }}" role="status">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+<twig:tstdt:TanstackDataTable :config="table" />

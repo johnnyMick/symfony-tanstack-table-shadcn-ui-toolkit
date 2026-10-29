@@ -1,0 +1,87 @@
+DataTables Demo: DataTables-Demo
+Admin console: Admin-Konsole
+TanStack Demo: TanStack-Demo
+Overview: Übersicht
+Dashboard: Dashboard
+Platform: Plattform
+Catalog: Katalog
+Products: Produkte
+Categories: Kategorien
+Sales: Verkauf
+Sales (unlocked): Verkauf (freigeschaltet)
+Sales (sign in required): Verkauf (Anmeldung erforderlich)
+Orders: Bestellungen
+Customers: Kunden
+Order items: Bestellpositionen
+Settings: Einstellungen
+Preferences: Präferenzen
+Invalid CSRF token.: Ungültiges CSRF-Token.
+Category not found.: Kategorie nicht gefunden.
+Product “%name%” saved.: Produkt „%name%“ gespeichert.
+Product “%name%” deleted.: Produkt „%name%“ gelöscht.
+Product “%name%” created.: Produkt „%name%“ erstellt.
+Choose a category.: Wählen Sie eine Kategorie.
+Category “%name%” saved.: Kategorie „%name%“ gespeichert.
+Category “%name%” deleted.: Kategorie „%name%“ gelöscht.
+Category “%name%” created.: Kategorie „%name%“ erstellt.
+Catalog products: Katalogprodukte
+TanStack Table with shadcn styling — server-side pagination via AJAX.: TanStack Table mit shadcn-Styling — serverseitige Pagination
+  per AJAX.
+No products yet. Reset demo data from Settings.: Noch keine Produkte. Demo-Daten unter Einstellungen zurücksetzen.
+Download CSV: CSV herunterladen
+Add: Hinzufügen
+Add product: Produkt hinzufügen
+Open: Öffnen
+SKU: SKU
+Name: Name
+Category: Kategorie
+Price: Preis
+Stock: Bestand
+Status: Status
+Active: Aktiv
+Inactive: Inaktiv
+Created: Erstellt
+Delete: Löschen
+Delete product “{name}”?: Produkt „{name}“ löschen?
+Open a category in a nested tab under this product.: Kategorie in einem verschachtelten Tab unter diesem Produkt öffnen.
+Catalog categories: Katalogkategorien
+Product groups used by the demo catalog.: Produktgruppen des Demo-Katalogs.
+No categories yet. Reset demo data from Settings.: Noch keine Kategorien. Demo-Daten unter Einstellungen zurücksetzen.
+Add category: Kategorie hinzufügen
+Slug: Slug
+Description: Beschreibung
+Delete category “{name}”?: Kategorie „{name}“ löschen?
+Sales orders: Verkaufsbestellungen
+Shop orders with server-side pagination via AJAX.: Shop-Bestellungen mit serverseitiger Pagination per AJAX.
+No orders yet. Reset demo data from Settings.: Noch keine Bestellungen. Demo-Daten unter Einstellungen zurücksetzen.
+Reference: Referenz
+Customer: Kunde
+Email: E-Mail
+Pending: Ausstehend
+Paid: Bezahlt
+Shipped: Versendet
+Cancelled: Storniert
+Refunded: Erstattet
+Total: Summe
+Ordered at: Bestellt am
+Shop customers seeded for the demo.: Shop-Kunden für die Demo.
+No customers yet. Reset demo data from Settings.: Noch keine Kunden. Demo-Daten unter Einstellungen zurücksetzen.
+Filter customers…: Kunden filtern…
+Location: Standort
+Order line items: Bestellpositionen
+Products sold on each order with quantity and unit price.: Verkaufte Produkte je Bestellung mit Menge und Stückpreis.
+No order items yet. Reset demo data from Settings.: Noch keine Positionen. Demo-Daten unter Einstellungen zurücksetzen.
+Filter order items…: Positionen filtern…
+Order: Bestellung
+Product: Produkt
+Qty: Menge
+Unit price: Stückpreis
+Line total: Zeilensumme
+Demo data: Demo-Daten
+Database tables: Datenbanktabellen
+Row counts for the seeded demo schema. Reset rebuilds everything from Faker.: Zeilenzahlen des Demo-Schemas. Zurücksetzen
+  baut alles mit Faker neu auf.
+No tables found.: Keine Tabellen gefunden.
+Table: Tabelle
+Rows: Zeilen
+'Demo data reset: %summary%.': 'Demo-Daten zurückgesetzt: %summary%.'

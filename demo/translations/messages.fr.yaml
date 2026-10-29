@@ -1,0 +1,87 @@
+DataTables Demo: Démo DataTables
+Admin console: Console d’administration
+TanStack Demo: Démo TanStack
+Overview: Aperçu
+Dashboard: Tableau de bord
+Platform: Plateforme
+Catalog: Catalogue
+Products: Produits
+Categories: Catégories
+Sales: Ventes
+Sales (unlocked): Ventes (déverrouillé)
+Sales (sign in required): Ventes (connexion requise)
+Orders: Commandes
+Customers: Clients
+Order items: Lignes de commande
+Settings: Paramètres
+Preferences: Préférences
+Invalid CSRF token.: Jeton CSRF invalide.
+Category not found.: Catégorie introuvable.
+Product “%name%” saved.: Produit « %name% » enregistré.
+Product “%name%” deleted.: Produit « %name% » supprimé.
+Product “%name%” created.: Produit « %name% » créé.
+Choose a category.: Choisissez une catégorie.
+Category “%name%” saved.: Catégorie « %name% » enregistrée.
+Category “%name%” deleted.: Catégorie « %name% » supprimée.
+Category “%name%” created.: Catégorie « %name% » créée.
+Catalog products: Produits du catalogue
+TanStack Table with shadcn styling — server-side pagination via AJAX.: Tableau TanStack avec style shadcn — pagination côté
+  serveur via AJAX.
+No products yet. Reset demo data from Settings.: Aucun produit. Réinitialisez les données depuis Paramètres.
+Download CSV: Télécharger CSV
+Add: Ajouter
+Add product: Ajouter un produit
+Open: Ouvrir
+SKU: SKU
+Name: Nom
+Category: Catégorie
+Price: Prix
+Stock: Stock
+Status: Statut
+Active: Actif
+Inactive: Inactif
+Created: Créé
+Delete: Supprimer
+Delete product “{name}”?: Supprimer le produit « {name} » ?
+Open a category in a nested tab under this product.: Ouvrir une catégorie dans un onglet imbriqué sous ce produit.
+Catalog categories: Catégories du catalogue
+Product groups used by the demo catalog.: Groupes de produits utilisés par le catalogue de démo.
+No categories yet. Reset demo data from Settings.: Aucune catégorie. Réinitialisez les données depuis Paramètres.
+Add category: Ajouter une catégorie
+Slug: Slug
+Description: Description
+Delete category “{name}”?: Supprimer la catégorie « {name} » ?
+Sales orders: Commandes de vente
+Shop orders with server-side pagination via AJAX.: Commandes boutique avec pagination côté serveur via AJAX.
+No orders yet. Reset demo data from Settings.: Aucune commande. Réinitialisez les données depuis Paramètres.
+Reference: Référence
+Customer: Client
+Email: E-mail
+Pending: En attente
+Paid: Payée
+Shipped: Expédiée
+Cancelled: Annulée
+Refunded: Remboursée
+Total: Total
+Ordered at: Commandée le
+Shop customers seeded for the demo.: Clients boutique générés pour la démo.
+No customers yet. Reset demo data from Settings.: Aucun client. Réinitialisez les données depuis Paramètres.
+Filter customers…: Filtrer les clients…
+Location: Localisation
+Order line items: Lignes de commande
+Products sold on each order with quantity and unit price.: Produits vendus sur chaque commande avec quantité et prix unitaire.
+No order items yet. Reset demo data from Settings.: Aucune ligne de commande. Réinitialisez les données depuis Paramètres.
+Filter order items…: Filtrer les lignes…
+Order: Commande
+Product: Produit
+Qty: Qté
+Unit price: Prix unitaire
+Line total: Total ligne
+Demo data: Données de démo
+Database tables: Tables de base de données
+Row counts for the seeded demo schema. Reset rebuilds everything from Faker.: Nombre de lignes du schéma de démo. La réinitialisation
+  reconstruit tout avec Faker.
+No tables found.: Aucune table trouvée.
+Table: Table
+Rows: Lignes
+'Demo data reset: %summary%.': 'Données de démo réinitialisées : %summary%.'
