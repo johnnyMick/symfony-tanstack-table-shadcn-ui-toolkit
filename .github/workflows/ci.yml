@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  bundle:
+    name: Bundle (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - run: composer validate --strict
+
+      - run: composer install --prefer-dist --no-progress
+
+      - run: composer test
+
+      - name: Skeleton sync
+        run: bash bin/check-skeleton-sync.sh
+
+      - name: Bundle tests
+        run: php vendor/bin/phpunit
+
+  demo:
+    name: Demo smoke
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          # Demo lock resolves Doctrine/UX/PHPUnit stacks that require PHP 8.4+.
+          php-version: '8.4'
+          coverage: none
+          extensions: pdo_sqlite
+          tools: composer:v2
+
+      - run: composer install --prefer-dist --no-progress
+
+      - name: Install front-end assets
+        run: |
+          # assets/vendor is gitignored; Tailwind must be pre-built for AssetMapper in test.
+          php bin/console importmap:install --no-interaction
+          php bin/console tailwind:build --no-interaction
+
+      - name: Prepare test database
+        run: |
+          # SQLite: file is created on connect; database:create is unsupported on this platform.
+          mkdir -p var
+          php bin/console doctrine:schema:create --env=test --no-interaction
+
+      - name: Smoke tests
+        run: php bin/phpunit tests/Controller/
